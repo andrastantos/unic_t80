@@ -61,4 +61,4 @@ __pycache__
 *.vcd
 
 **/impl/**
-*.user
+#*.user
