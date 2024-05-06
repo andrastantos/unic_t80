@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use work.StimLog.all;
+use std.env.stop;
 
 entity DebugSystem_TB is
 end entity DebugSystem_TB;
@@ -70,4 +71,9 @@ begin
 	-- 18 MHz clock
 	Clk <= not Clk after 27 ns;
 
+	terminate: process
+	begin
+		wait for 27*100000 ns;
+		stop;
+	end process terminate;
 end;

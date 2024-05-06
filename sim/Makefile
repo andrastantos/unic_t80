@@ -1,5 +1,5 @@
 GHDL=ghdl
-GHDLFLAGS= -fsynopsys -fexplicit
+GHDLFLAGS= -fsynopsys -fexplicit --std=08
 GHDLRUNFLAGS= --vcd=debugsystem_tb.vcd
 
 # Default target : elaborate
