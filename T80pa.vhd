@@ -60,7 +60,8 @@ use work.T80_Pack.all;
 
 entity T80pa is
     generic(
-        Mode : integer := 0 -- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
+        Mode      : integer := 0; -- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
+        R800_mode : integer := 0  -- 0 => no R800 instructions (multiplies), 1 => support R800 multiplies
     );
     port(
         RESET_n     : in  std_logic;
@@ -83,7 +84,6 @@ entity T80pa is
         A           : out std_logic_vector(15 downto 0);
         DI          : in  std_logic_vector(7 downto 0);
         DO          : out std_logic_vector(7 downto 0);
-        R800_mode   : in  std_logic := '0';
         REG         : out std_logic_vector(211 downto 0); -- IFF2, IFF1, IM, IY, HL', DE', BC', IX, HL, DE, BC, PC, SP, R, I, F', A', F, A
         DIRSet      : in  std_logic := '0';
         DIR         : in  std_logic_vector(211 downto 0) := (others => '0') -- IFF2, IFF1, IM, IY, HL', DE', BC', IX, HL, DE, BC, PC, SP, R, I, F', A', F, A
@@ -110,8 +110,9 @@ begin
 
     u0 : T80
         generic map(
-            Mode    => Mode,
-            IOWait  => 1
+            Mode      => Mode,
+            R800_mode => R800_mode,
+            IOWait    => 1
         )
         port map(
             CEN     => CEN,
@@ -136,7 +137,6 @@ begin
             MC      => MCycle,
             TS      => TState,
             OUT0    => OUT0,
-            R800_mode => R800_mode,
             IntCycle_n => IntCycle_n,
             DIRSet  => DIRSet,
             DIR     => DIR

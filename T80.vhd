@@ -84,16 +84,17 @@ use work.T80_Pack.all;
 
 entity T80 is
 	generic(
-		Mode   : integer := 0;  -- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
-		IOWait : integer := 0;  -- 0 => Single cycle I/O, 1 => Std I/O cycle
-		Flag_C : integer := 0;
-		Flag_N : integer := 1;
-		Flag_P : integer := 2;
-		Flag_X : integer := 3;
-		Flag_H : integer := 4;
-		Flag_Y : integer := 5;
-		Flag_Z : integer := 6;
-		Flag_S : integer := 7
+		Mode      : integer := 0;  -- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
+		R800_mode : integer := 0;  -- 0 => No R800 multiplies, 1 => Support R800 instructions
+		IOWait    : integer := 0;  -- 0 => Single cycle I/O, 1 => Std I/O cycle
+		Flag_C    : integer := 0;
+		Flag_N    : integer := 1;
+		Flag_P    : integer := 2;
+		Flag_X    : integer := 3;
+		Flag_H    : integer := 4;
+		Flag_Y    : integer := 5;
+		Flag_Z    : integer := 6;
+		Flag_S    : integer := 7
 	);
 	port(
 		RESET_n    : in  std_logic;
@@ -119,7 +120,6 @@ entity T80 is
 		IntCycle_n : out std_logic;
 		IntE       : out std_logic;
 		Stop       : out std_logic;
-		R800_mode  : in  std_logic := '0';
 		out0       : in  std_logic := '0';  -- 0 => OUT(C),0, 1 => OUT(C),255
 		REG        : out std_logic_vector(211 downto 0); -- IFF2, IFF1, IM, IY, HL', DE', BC', IX, HL, DE, BC, PC, SP, R, I, F', A', F, A
 
@@ -269,15 +269,16 @@ begin
 
 	mcode : T80_MCode
 		generic map(
-			Mode   => Mode,
-			Flag_C => Flag_C,
-			Flag_N => Flag_N,
-			Flag_P => Flag_P,
-			Flag_X => Flag_X,
-			Flag_H => Flag_H,
-			Flag_Y => Flag_Y,
-			Flag_Z => Flag_Z,
-			Flag_S => Flag_S)
+			Mode      => Mode,
+			R800_mode => R800_mode,
+			Flag_C    => Flag_C,
+			Flag_N    => Flag_N,
+			Flag_P    => Flag_P,
+			Flag_X    => Flag_X,
+			Flag_H    => Flag_H,
+			Flag_Y    => Flag_Y,
+			Flag_Z    => Flag_Z,
+			Flag_S    => Flag_S)
 		port map(
 			IR          => IR,
 			ISet        => ISet,
@@ -338,7 +339,6 @@ begin
 			Halt        => Halt,
 			NoRead      => NoRead,
 			Write       => Write,
-			R800_mode   => R800_mode,
 			No_PC       => No_PC,
 			XYbit_undoc => XYbit_undoc);
 

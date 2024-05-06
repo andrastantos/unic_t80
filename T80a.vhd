@@ -82,11 +82,11 @@ use work.T80_Pack.all;
 entity T80a is
 	generic(
 		Mode            : integer := 0;     -- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
-		IOWait          : integer := 1      -- 0 => Single I/O cycle, 1 => Std I/O cycle
+		IOWait          : integer := 1;     -- 0 => Single I/O cycle, 1 => Std I/O cycle
+      R800_mode       : integer := 0      -- 0 => no R800 instructions (multiplies), 1 => support R800 multiplies
 	);
 	port(
 		RESET_n         : in std_logic;
-		R800_mode       : in std_logic;
 		CLK_n           : in std_logic;
 		WAIT_n          : in std_logic;
 		INT_n           : in std_logic;
@@ -143,7 +143,7 @@ begin
 
 	BUSAK_n <= BUSAK_n_i;                                                -- 30/10/19 Charlie Ingley - IORQ/RD/WR changes
 	MREQ_rw <= MREQ and (Req_Inhibit or MReq_Inhibit);                   -- added MREQ timing control
-	MREQ_n_i <= not MREQ_rw;                                             -- changed MREQ generation 
+	MREQ_n_i <= not MREQ_rw;                                             -- changed MREQ generation
 	IORQ_rw <= IORQ and not (IORQ_t1 or IORQ_t2);                        -- added IORQ generation timing control
 	IORQ_n_i <= not ((IORQ_int and not IORQ_int_inhibit(2)) or IORQ_rw); -- changed IORQ generation
 	RD_n_i <= not (RD and (MREQ_rw or IORQ_rw));                         -- changed RD/IORQ generation
@@ -168,10 +168,11 @@ begin
 
 	u0 : T80
 		generic map(
-			Mode => Mode,
-			IOWait => IOWait)
-		port map(
+			Mode      => Mode,
 			R800_mode => R800_mode,
+			IOWait    => IOWait
+      )
+		port map(
 			CEN => CEN,
 			M1_n => M1_n,
 			IORQ => IORQ,

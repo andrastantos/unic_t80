@@ -79,15 +79,16 @@ use work.T80_Pack.all;
 
 entity T80_MCode is
 	generic(
-		Mode   : integer := 0;
-		Flag_C : integer := 0;
-		Flag_N : integer := 1;
-		Flag_P : integer := 2;
-		Flag_X : integer := 3;
-		Flag_H : integer := 4;
-		Flag_Y : integer := 5;
-		Flag_Z : integer := 6;
-		Flag_S : integer := 7
+		Mode        : integer := 0;
+		R800_mode   : integer := 0;
+		Flag_C      : integer := 0;
+		Flag_N      : integer := 1;
+		Flag_P      : integer := 2;
+		Flag_X      : integer := 3;
+		Flag_H      : integer := 4;
+		Flag_Y      : integer := 5;
+		Flag_Z      : integer := 6;
+		Flag_S      : integer := 7
 	);
 	port(
       IR          : in std_logic_vector(7 downto 0);
@@ -150,7 +151,6 @@ entity T80_MCode is
       Halt        : out std_logic;
       NoRead      : out std_logic;
       Write       : out std_logic;
-      R800_mode   : in  std_logic;
       No_PC       : out std_logic;
       XYbit_undoc : out std_logic
    );
@@ -190,7 +190,7 @@ architecture rtl of T80_MCode is
 
 begin
 
-	process (IR, ISet, MCycle, F, NMICycle, IntCycle, XY_State, R800_mode)
+	process (IR, ISet, MCycle, F, NMICycle, IntCycle, XY_State)
 		variable DDD   : std_logic_vector(2 downto 0);
 		variable SSS   : std_logic_vector(2 downto 0);
 		variable DPair : std_logic_vector(1 downto 0);
@@ -1233,7 +1233,7 @@ begin
 		when "11101001" =>
 			-- JP (HL)
 			JumpXY <= '1';
-		when "00010000" =>  
+		when "00010000" =>
 			if Mode = 3 then -- STOP and skip next byte
 				MCycles <= "010";
 				I_DJNZ <= '1';
@@ -2193,7 +2193,7 @@ begin
 				end case;
 			when "11000001"|"11001001"|"11010001"|"11011001" =>
 				 --R800 MULUB
-				if R800_mode = '1' then
+				if R800_mode = 1 then
 					MCycles <= "010";
 					case to_integer(unsigned(MCycle)) is
 					when 1 =>
@@ -2210,7 +2210,7 @@ begin
 				end if;
 			when "11000011"|"11110011" =>
 				--R800 MULUW
-				if R800_mode = '1' then
+				if R800_mode = 1 then
 					MCycles <= "010";
 					case to_integer(unsigned(MCycle)) is
 					when 1 =>
