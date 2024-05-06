@@ -1,0 +1,46 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Mon May  6 23:30:48 2024
+[*]
+[dumpfile] "/home/tantos/unic/cores/unic_t80/sim/debugsystem_tb.vcd"
+[dumpfile_mtime] "Mon May  6 23:26:11 2024"
+[dumpfile_size] 137437184
+[savefile] "/home/tantos/unic/cores/unic_t80/sim/debugsystem_tb.gtkw"
+[timestart] 0
+[size] 1920 990
+[pos] -1 -1
+*-37.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] debugsystem_tb.
+[treeopen] debugsystem_tb.ni.
+[sst_width] 233
+[signals_width] 118
+[sst_expanded] 1
+[sst_vpaned_height] 269
+@28
+debugsystem_tb.ni.z80.clk
+debugsystem_tb.ni.z80.reset_n
+@22
+debugsystem_tb.ni.z80.a[15:0]
+debugsystem_tb.ni.z80.di[7:0]
+@28
+debugsystem_tb.ni.z80.iorq_n
+debugsystem_tb.ni.z80.mreq_n
+debugsystem_tb.ni.z80.rfsh_n
+debugsystem_tb.ni.z80.wr_n
+debugsystem_tb.ni.z80.rd_n
+debugsystem_tb.ni.z80.m1_n
+debugsystem_tb.ni.z80.tstate[2:0]
+debugsystem_tb.ni.z80.mcycle[2:0]
+@200
+-UART1
+@28
+debugsystem_tb.ni.uart1.cs_n
+debugsystem_tb.ni.uart1.a[2:0]
+@22
+debugsystem_tb.ni.uart1.d_in[7:0]
+@28
+debugsystem_tb.ni.uart1.rxd
+@29
+debugsystem_tb.ni.uart1.txd
+[pattern_trace] 1
+[pattern_trace] 0
