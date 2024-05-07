@@ -8,7 +8,7 @@ all: run
 VHDL_SRC =  \
     StimLog.vhd \
     ../T80_Pack.vhd \
-    ../T80s.vhd \
+    ../T80a.vhd \
     _obj/test.vhd \
     SSRAM2.vhd \
     T16450.vhd \

@@ -83,7 +83,7 @@ entity T80a is
 	generic(
 		Mode            : integer := 0;     -- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
 		IOWait          : integer := 1;     -- 0 => Single I/O cycle, 1 => Std I/O cycle
-      R800_mode       : integer := 0      -- 0 => no R800 instructions (multiplies), 1 => support R800 multiplies
+		R800_mode       : integer := 0      -- 0 => no R800 instructions (multiplies), 1 => support R800 multiplies
 	);
 	port(
 		RESET_n         : in std_logic;

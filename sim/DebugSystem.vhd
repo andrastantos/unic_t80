@@ -41,7 +41,6 @@ architecture struct of DebugSystem is
 	signal ROM_D		: std_logic_vector(7 downto 0);
 	signal SRAM_D		: std_logic_vector(7 downto 0);
 	signal UART0_D		: std_logic_vector(7 downto 0);
-	signal UART1_D		: std_logic_vector(7 downto 0);
 	signal CPU_D		: std_logic_vector(7 downto 0);
 
 	signal Mirror		: std_logic;
@@ -79,12 +78,13 @@ begin
 		SRAM_D when RAMCS_n = '0' else
 		UART0_D when UART0CS_n = '0' else
 		ROM_D;
+	D <= CPU_D when RD_n = '0' else "ZZZZZZZZ";
 
-	z80 : entity work.T80s
-			generic map(Mode => 1, T2Write => 1, IOWait => 0)
+	z80 : entity work.T80a
+			generic map(Mode => 1, IOWait => 0, R800_mode => 0)
 			port map(
 				RESET_n => RESET_s,
-				CLK => Clk,
+				CLK_n => Clk,
 				WAIT_n => WAIT_n,
 				INT_n => INT_n,
 				NMI_n => NMI_n,
@@ -98,8 +98,7 @@ begin
 				HALT_n => HALT_n,
 				BUSAK_n => BUSAK_n,
 				A => A,
-				DI => CPU_D,
-				DO => D);
+				D => D);
 
 	rom : entity work.rom
 			port map(
