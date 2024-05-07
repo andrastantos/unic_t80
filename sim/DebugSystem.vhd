@@ -16,17 +16,9 @@ entity DebugSystem is
 		DSR0		: in std_logic;
 		RI0			: in std_logic;
 		DCD0		: in std_logic;
-		RXD1		: in std_logic;
-		CTS1		: in std_logic;
-		DSR1		: in std_logic;
-		RI1			: in std_logic;
-		DCD1		: in std_logic;
 		TXD0		: out std_logic;
 		RTS0		: out std_logic;
-		DTR0		: out std_logic;
-		TXD1		: out std_logic;
-		RTS1		: out std_logic;
-		DTR1		: out std_logic
+		DTR0		: out std_logic
 	);
 end DebugSystem;
 
@@ -57,10 +49,8 @@ architecture struct of DebugSystem is
 	signal IOWR_n		: std_logic;
 	signal RAMCS_n		: std_logic;
 	signal UART0CS_n	: std_logic;
-	signal UART1CS_n	: std_logic;
 
 	signal BaudOut0		: std_logic;
-	signal BaudOut1		: std_logic;
 
 begin
 
@@ -84,13 +74,10 @@ begin
 	IOWR_n <= WR_n or IORQ_n;
 	RAMCS_n <= (not Mirror and not A(15)) or MREQ_n; -- RAM is from 0x8000 if Mirror is '0', 0x0000 otherwise
 	UART0CS_n <= '0' when IORQ_n = '0' and A(7 downto 3) = "00000" else '1'; -- 0x00 - 0x07
-	UART1CS_n <= '0' when IORQ_n = '0' and A(7 downto 3) = "10000" else '1'; -- 0x80 - 0x87
-	-- UART1CS_n <= '0' when IORQ_n = '0' and A(7 downto 3) = "10000" else '1';
 
 	CPU_D <=
 		SRAM_D when RAMCS_n = '0' else
 		UART0_D when UART0CS_n = '0' else
-		UART1_D when UART1CS_n = '0' else
 		ROM_D;
 
 	z80 : entity work.T80s
@@ -114,7 +101,7 @@ begin
 				DI => CPU_D,
 				DO => D);
 
-	mon_rom : entity work.MonZ80
+	rom : entity work.rom
 			port map(
 				Clk => Clk,
 				A => A(14 downto 0),
@@ -131,7 +118,7 @@ begin
 				DIn => D,
 				DOut => SRAM_D);
 
-	uart1 : entity work.T16450
+	uart : entity work.T16450
 			port map(
 				MR_n => Reset_s,
 				XIn => Clk,
@@ -154,29 +141,4 @@ begin
 				OUT2_n => open,
 				BaudOut => BaudOut0,
 				Intr => open);
-
-	uart2 : entity work.T16450
-			port map(
-				MR_n => Reset_s,
-				XIn => Clk,
-				RClk => BaudOut1,
-				CS_n => UART1CS_n,
-				Rd_n => RD_n,
-				Wr_n => IOWR_n,
-				A => A(2 downto 0),
-				D_In => D,
-				D_Out => UART1_D,
-				SIn => RXD1,
-				CTS_n => CTS1,
-				DSR_n => DSR1,
-				RI_n => RI1,
-				DCD_n => DCD1,
-				SOut => TXD1,
-				RTS_n => RTS1,
-				DTR_n => DTR1,
-				OUT1_n => open,
-				OUT2_n => open,
-				BaudOut => BaudOut1,
-				Intr => open);
-
 end;

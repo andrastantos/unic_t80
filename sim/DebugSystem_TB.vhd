@@ -21,15 +21,6 @@ architecture behaviour of DebugSystem_TB is
 	signal RI0			: std_logic := '1';
 	signal DCD0			: std_logic := '0';
 
-	signal TXD1			: std_logic;
-	signal RTS1			: std_logic;
-	signal DTR1			: std_logic;
-	signal RXD1			: std_logic;
-	signal CTS1			: std_logic := '0';
-	signal DSR1			: std_logic := '0';
-	signal RI1			: std_logic := '1';
-	signal DCD1			: std_logic := '0';
-
 begin
 
 	ni : entity work.DebugSystem
@@ -42,29 +33,16 @@ begin
 			DSR0 => DSR0,
 			RI0 => RI0,
 			DCD0 => DCD0,
-			RXD1 => RXD1,
-			CTS1 => CTS1,
-			DSR1 => DSR1,
-			RI1 => RI1,
-			DCD1 => DCD1,
 			TXD0 => TXD0,
 			RTS0 => RTS0,
-			DTR0 => DTR0,
-			TXD1 => TXD1,
-			RTS1 => RTS1,
-			DTR1 => DTR1);
+			DTR0 => DTR0
+		);
 
 	-- as0 : AsyncStim generic map(FileName => "../bench/vhdl/ROM80.vhd", InterCharDelay => 0 us, Baud => 115200, Bits => 8)
 	--			port map(RXD0);
 
 	al0 : AsyncLog generic map(FileName => "_out/uart0_rx.log", Baud => 115200, Bits => 8)
 				port map(TXD0);
-
-	-- as1 : AsyncStim generic map(FileName => "RX_Cmd1.txt", InterCharDelay => 0 us, Baud => 115200, Bits => 8)
-	--			port map(RXD1);
-
-	al1 : AsyncLog generic map(FileName => "_out/uart1_rx.log", Baud => 115200, Bits => 8)
-				port map(TXD1);
 
 	Reset_n <= '0', '1' after 1 us;
 

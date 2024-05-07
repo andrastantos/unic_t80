@@ -43,4 +43,4 @@ _obj/hex2rom: hex2rom.cpp
 
 _obj/test.vhd: _obj/test.bin _obj/hex2rom
 	-mkdir _obj
-	_obj/hex2rom $< MonZ80 15l8s $@
+	_obj/hex2rom $< rom 15l8s $@
