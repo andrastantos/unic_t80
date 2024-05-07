@@ -1,6 +1,6 @@
 GHDL=ghdl
 GHDLFLAGS= -fsynopsys -fexplicit --std=08
-GHDLRUNFLAGS= --vcd=debugsystem_tb.vcd
+GHDLRUNFLAGS= --vcd=_out/debugsystem_tb.vcd
 
 # Default target : elaborate
 all: run
@@ -23,6 +23,7 @@ VHDL_SRC =  \
 
 # Run target
 run: $(VHDL_SRC)
+	-mkdir _out
 	$(GHDL) -c $(GHDLFLAGS) $(VHDL_SRC) -r debugsystem_tb $(GHDLRUNFLAGS)
 
 

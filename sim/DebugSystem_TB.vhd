@@ -57,13 +57,13 @@ begin
 	-- as0 : AsyncStim generic map(FileName => "../bench/vhdl/ROM80.vhd", InterCharDelay => 0 us, Baud => 115200, Bits => 8)
 	--			port map(RXD0);
 
-	al0 : AsyncLog generic map(FileName => "RX_Log0.txt", Baud => 115200, Bits => 8)
+	al0 : AsyncLog generic map(FileName => "_out/uart0_rx.log", Baud => 115200, Bits => 8)
 				port map(TXD0);
 
 	-- as1 : AsyncStim generic map(FileName => "RX_Cmd1.txt", InterCharDelay => 0 us, Baud => 115200, Bits => 8)
 	--			port map(RXD1);
 
-	al1 : AsyncLog generic map(FileName => "RX_Log1.txt", Baud => 115200, Bits => 8)
+	al1 : AsyncLog generic map(FileName => "_out/uart1_rx.log", Baud => 115200, Bits => 8)
 				port map(TXD1);
 
 	Reset_n <= '0', '1' after 1 us;
