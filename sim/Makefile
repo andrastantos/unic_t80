@@ -3,50 +3,43 @@ GHDLFLAGS= -fsynopsys -fexplicit --std=08
 GHDLRUNFLAGS= --vcd=debugsystem_tb.vcd
 
 # Default target : elaborate
-all : elab
+all: run
 
-# Elaborate target.  Almost useless
-elab : init
-	$(GHDL) -c $(GHDLFLAGS) -e debugsystem_tb
+VHDL_SRC =  \
+    StimLog.vhd \
+    ../T80_Pack.vhd \
+    ../T80s.vhd \
+    _obj/test.vhd \
+    SSRAM2.vhd \
+    T16450.vhd \
+    DebugSystem.vhd \
+    DebugSystem_TB.vhd \
+    ../T80.vhd \
+    ../T80_MCode.vhd \
+    ../T80_ALU.vhd \
+    ../T80_Reg.vhd \
+    AsyncStim.vhd \
+    AsyncLog.vhd
 
 # Run target
-run : init
-	$(GHDL) -c $(GHDLFLAGS) -r debugsystem_tb $(GHDLRUNFLAGS)
+run: $(VHDL_SRC)
+	$(GHDL) -c $(GHDLFLAGS) $(VHDL_SRC) -r debugsystem_tb $(GHDLRUNFLAGS)
 
-# Targets to analyze libraries
-init: force test.vhd
-	-rm work-obj93.cf
-	# /usr/lib/ghdl/mcode/vhdl/ieee/v93/../../src/ieee/v93/std_logic_1164.vhdl
-	# /usr/lib/ghdl/mcode/vhdl/ieee/v93/../../src/ieee/v93/std_logic_1164-body.vhdl
-	$(GHDL) -a $(GHDLFLAGS) StimLog.vhd
-	# /usr/lib/ghdl/mcode/vhdl/ieee/v93/../../src/ieee/v93/numeric_std.vhdl
-	# /usr/lib/ghdl/mcode/vhdl/ieee/v93/../../src/ieee/v93/numeric_std-body.vhdl
-	# /usr/lib/ghdl/mcode/vhdl/ieee/v93/../../src/synopsys/std_logic_arith.vhdl
-	# /usr/lib/ghdl/mcode/vhdl/ieee/v93/../../src/synopsys/std_logic_unsigned.vhdl
-	$(GHDL) -a $(GHDLFLAGS) ../T80_Pack.vhd
-	$(GHDL) -a $(GHDLFLAGS) ../T80s.vhd
-	$(GHDL) -a $(GHDLFLAGS) test.vhd
-	$(GHDL) -a $(GHDLFLAGS) SSRAM2.vhd
-	$(GHDL) -a $(GHDLFLAGS) T16450.vhd
-	$(GHDL) -a $(GHDLFLAGS) DebugSystem.vhd
-	$(GHDL) -a $(GHDLFLAGS) DebugSystem_TB.vhd
-	$(GHDL) -a $(GHDLFLAGS) ../T80.vhd
-	$(GHDL) -a $(GHDLFLAGS) ../T80_MCode.vhd
-	$(GHDL) -a $(GHDLFLAGS) ../T80_ALU.vhd
-	$(GHDL) -a $(GHDLFLAGS) ../T80_Reg.vhd
-	$(GHDL) -a $(GHDLFLAGS) AsyncStim.vhd
-	$(GHDL) -a $(GHDLFLAGS) AsyncLog.vhd
 
 force:
 
-test.ihx: test.c
+_obj/test.ihx: test.c
+	-mkdir _obj
 	sdcc -mz80 $^ -o $@
 
-test.bin: test.ihx
+_obj/test.bin: _obj/test.ihx
+	-mkdir _obj
 	objcopy --input-target=ihex --output-target=binary $< $@
 
-hex2rom: hex2rom.cpp
+_obj/hex2rom: hex2rom.cpp
+	-mkdir _obj
 	g++ $^ -o $@
 
-test.vhd: test.bin hex2rom
-	./hex2rom $< MonZ80 15l8s $@
+_obj/test.vhd: _obj/test.bin _obj/hex2rom
+	-mkdir _obj
+	_obj/hex2rom $< MonZ80 15l8s $@
