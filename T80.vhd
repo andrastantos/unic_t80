@@ -260,6 +260,7 @@ architecture rtl of T80 is
 	signal XYbit_undoc          : std_logic;
 	signal No_PC                : std_logic;
 	signal DOR                  : std_logic_vector(127 downto 0);
+	signal Update_DO            : std_logic;
 
 begin
 
@@ -380,6 +381,8 @@ begin
 	Save_Mux <= BusB when ExchangeRp = '1' else
 		DI_Reg when Save_ALU_r = '0' else
 		ALU_Q;
+
+	Update_DO <= '1' when (TState /= 2 or Wait_n = '1') and T_Res = '1' else '0';
 
 	process (RESET_n, CLK_n)
 		variable n : std_logic_vector(7 downto 0);
@@ -824,7 +827,7 @@ begin
 						DI_Reg(4) xor DI_Reg(5) xor DI_Reg(6) xor DI_Reg(7));
 				end if;
 
-				if TState = 1 and Auto_Wait_t1 = '0' then
+				if Update_DO = '1' then
 					-- Keep D0 from M3 for RLD/RRD (Sorgelig)
 					I_RXDD <= I_RLD or I_RRD;
 					if I_RXDD='0' then
@@ -869,8 +872,6 @@ begin
 					case Read_To_Reg_r is
 					when "10111" =>
 						ACC <= Save_Mux;
-					when "10110" =>
-						DO <= Save_Mux;
 					when "11000" =>
 						SP(7 downto 0) <= unsigned(Save_Mux);
 					when "11001" =>
@@ -884,10 +885,20 @@ begin
 						end if;
 					when others =>
 					end case;
+				end if;
+
+				if (Update_DO = '1' and Save_ALU_r = '0') or
+					(Save_ALU_r = '1' and ALU_OP_r /= "0111") then
+					case Read_To_Reg_r is
+					when "10110" =>
+						DO <= Save_Mux;
+					when others =>
+					end case;
 					if XYbit_undoc='1' then
 						DO <= ALU_Q;
 					end if;
 				end if;
+
 			end if;
 		end if;
 	end process;
