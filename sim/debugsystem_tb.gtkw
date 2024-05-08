@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Wed May  8 01:09:48 2024
+[*] Wed May  8 20:51:28 2024
 [*]
 [dumpfile] "/home/tantos/unic/cores/unic_t80/sim/_out/debugsystem_tb.vcd"
-[dumpfile_mtime] "Wed May  8 00:58:57 2024"
-[dumpfile_size] 24623504
+[dumpfile_mtime] "Wed May  8 20:51:28 2024"
+[dumpfile_size] 52740096
 [savefile] "/home/tantos/unic/cores/unic_t80/sim/debugsystem_tb.gtkw"
-[timestart] 6472000000
+[timestart] 1867000000000
 [size] 1920 990
 [pos] -1 -1
-*-28.300541 6588000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-39.089367 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] debugsystem_tb.
 [treeopen] debugsystem_tb.ni.
 [treeopen] debugsystem_tb.ni.z80.
@@ -24,10 +24,13 @@ debugsystem_tb.ni.z80.reset_n
 @22
 debugsystem_tb.ni.z80.a[15:0]
 debugsystem_tb.ni.z80.d[7:0]
-@28
+@29
+[color] 2
 debugsystem_tb.ni.z80.iorq_n
+@28
 debugsystem_tb.ni.z80.mreq_n
 debugsystem_tb.ni.z80.rfsh_n
+[color] 1
 debugsystem_tb.ni.z80.wr_n
 debugsystem_tb.ni.z80.rd_n
 debugsystem_tb.ni.z80.m1_n
@@ -49,7 +52,6 @@ debugsystem_tb.ni.z80.u0.tstate[2:0]
 debugsystem_tb.ni.z80.u0.t_res
 debugsystem_tb.ni.z80.u0.auto_wait_t1
 debugsystem_tb.ni.z80.u0.write
-@29
 debugsystem_tb.ni.z80.wr_t2
 [pattern_trace] 1
 [pattern_trace] 0
