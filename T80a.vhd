@@ -113,6 +113,7 @@ architecture rtl of T80a is
 	signal IORQ                 : std_logic;
 	signal NoRead               : std_logic;
 	signal Write                : std_logic;
+   signal Write_half_delayed   : std_logic;
 	signal MREQ                 : std_logic;
 	signal MReq_Inhibit     : std_logic;
 	signal Req_Inhibit      : std_logic;
@@ -155,7 +156,7 @@ begin
 	WR_n <= WR_n_i when BUSAK_n_i = '1' else 'Z';
 	RFSH_n <= RFSH_n_i when BUSAK_n_i = '1' else 'Z';
 	A <= A_i when BUSAK_n_i = '1' else (others => 'Z');
-	D <= DO when Write = '1' and BUSAK_n_i = '1' else (others => 'Z');
+	D <= DO when Write = '1' and Write_half_delayed = '1' and BUSAK_n_i = '1' else (others => 'Z');
 
 	process (RESET_n, CLK_n)
 	begin
@@ -204,6 +205,13 @@ begin
 			end if;
 		end if;
 	end process;
+
+   process (CLK_n)
+   begin
+		if CLK_n'event and CLK_n = '0' then
+         Write_half_delayed <= Write;
+      end if;
+   end process;
 
 -- 30/10/19 Charlie Ingley - Generate WR_t2 to correct MREQ/WR timing
    process (Reset_s,CLK_n)
