@@ -51,7 +51,7 @@ begin
 
 	terminate: process
 	begin
-		wait for 27*100000 ns;
+		wait for 27*10000000 ns;
 		stop;
 	end process terminate;
 end;

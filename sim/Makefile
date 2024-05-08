@@ -37,10 +37,23 @@ _obj/test.bin: _obj/test.ihx
 	-mkdir _obj
 	objcopy --input-target=ihex --output-target=binary $< $@
 
-_obj/hex2rom: hex2rom.cpp
-	-mkdir _obj
-	g++ $^ -o $@
+#_obj/hex2rom: hex2rom.cpp
+#	-mkdir _obj
+#	g++ $^ -o $@
 
-_obj/test.vhd: _obj/test.bin _obj/hex2rom
+#_obj/test.vhd: _obj/test.bin
+_obj/test.vhd: _obj/zexall.bin sram_template.vhd
 	-mkdir _obj
-	_obj/hex2rom $< rom 15l8s $@
+	./ram_init.py -i $< -o $@ -t sram_template.vhd -n ROM
+
+zmac/zmac:
+	make -C zmac zmac
+
+_obj/zexall.hex: zexall.asm zmac/zmac
+	-mkdir _obj
+	zmac/zmac $< -o $@
+
+_obj/zexall.bin: _obj/zexall.hex
+	-mkdir _obj
+	objcopy --input-target=ihex --output-target=binary $< $@
+
