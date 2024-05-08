@@ -107,6 +107,7 @@ begin
 						report "Framing error"
 						severity error;
 					write(OutFile, to_char(RX_ShiftReg(7 downto 0)));
+					flush(OutFile);
 				elsif RX_Bit_Cnt = Bits + 1 and Parity then -- Parity bit
 					assert ParTmp xor (RXD = '1') = P_Odd_Even_n
 						report "Parity error"
