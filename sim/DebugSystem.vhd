@@ -81,7 +81,7 @@ begin
 	D <= CPU_D when RD_n = '0' else "ZZZZZZZZ";
 
 	z80 : entity work.T80a
-			generic map(Mode => 1, IOWait => 0, R800_mode => 0)
+			generic map(Mode => 1, IOWait => 1, R800_mode => 0)
 			port map(
 				RESET_n => RESET_s,
 				CLK_n => Clk,
