@@ -6,7 +6,6 @@ GHDLRUNFLAGS= --vcd=_out/debugsystem_tb.vcd
 all: run
 
 VHDL_SRC =  \
-    StimLog.vhd \
     ../T80_Pack.vhd \
     ../T80a.vhd \
     _obj/test.vhd \

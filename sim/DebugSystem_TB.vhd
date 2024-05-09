@@ -1,6 +1,5 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
-use work.StimLog.all;
 use std.env.stop;
 
 entity DebugSystem_TB is
