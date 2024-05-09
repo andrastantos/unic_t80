@@ -75,17 +75,16 @@ $$$CONTENT$$$,
 
 begin
 
-    process (Clk)
+    process (CE_n, WE_n)
     begin
-        if Clk'event and Clk = '1' then
--- pragma translate_off
-            if not is_x(A) then
--- pragma translate_on
+        if CE_n'event or WE_n'event then
+            if CE_n = '0' and WE_n = '1' then
+                assert not is_x(A) report "Read from X address" severity FAILURE;
                 DOut <= MemArray(to_integer(unsigned(A(AddrWidth - 1 downto 0))));
--- pragma translate_off
             end if;
--- pragma translate_on
-            if CE_n = '0' and WE_n = '0' then
+            if CE_n = '0' and WE_n'event and WE_n = '1' then -- we right on the rising edge of CLK, not on the falling one
+                assert not is_x(A) report "Write to X address" severity FAILURE;
+                assert not is_x(DIn) report "Write X data" severity FAILURE;
                 MemArray(to_integer(unsigned(A))) <= DIn;
             end if;
 --            A_r <= A;
