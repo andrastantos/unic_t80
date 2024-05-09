@@ -11,15 +11,13 @@ VHDL_SRC =  \
     ../T80a.vhd \
     _obj/test.vhd \
     SSRAM2.vhd \
-    T16450.vhd \
+    sim_ser.vhd \
     DebugSystem.vhd \
     DebugSystem_TB.vhd \
     ../T80.vhd \
     ../T80_MCode.vhd \
     ../T80_ALU.vhd \
-    ../T80_Reg.vhd \
-    AsyncStim.vhd \
-    AsyncLog.vhd
+    ../T80_Reg.vhd
 
 # Run target
 run: $(VHDL_SRC)

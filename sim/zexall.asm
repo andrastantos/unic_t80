@@ -154,9 +154,6 @@ _init_uart:
         ret
 
 _putchar:
-        in      a, (_uart0_LINE_STAT)
-        and     a, 020h
-        jr      Z,_putchar
         ld      a,e
         out     (_uart0_DATA), a
         ret
@@ -165,17 +162,35 @@ _putstr:
         ld      a,(de)
         cp '$'
         jr      Z, _putstr_ret$
-        ld      b,a
-_putstr_wait$:
-        in      a, (_uart0_LINE_STAT)
-        and     a, 020h
-        jr      Z,_putstr_wait$
-        ld      a,b
         out     (_uart0_DATA), a
         inc de
         jr _putstr
 _putstr_ret$:
         ret
+
+;_putchar:
+;        in      a, (_uart0_LINE_STAT)
+;        and     a, 020h
+;        jr      Z,_putchar
+;        ld      a,e
+;        out     (_uart0_DATA), a
+;        ret
+;
+;_putstr:
+;        ld      a,(de)
+;        cp '$'
+;        jr      Z, _putstr_ret$
+;        ld      b,a
+;_putstr_wait$:
+;        in      a, (_uart0_LINE_STAT)
+;        and     a, 020h
+;        jr      Z,_putstr_wait$
+;        ld      a,b
+;        out     (_uart0_DATA), a
+;        inc de
+;        jr _putstr
+;_putstr_ret$:
+;        ret
 
 
 start:  ld      hl,(6)
@@ -196,10 +211,10 @@ loop:   ld      a,(hl)          ; end of list ?
 done:   ld      de,msg2
         ld      c,9
         call    bdos
-_flush$:
-        in      a, (_uart0_LINE_STAT)
-        and     a, 020h
-        jr      Z,_flush$
+;_flush$:
+;        in      a, (_uart0_LINE_STAT)
+;        and     a, 020h
+;        jr      Z,_flush$
 
         out     (_sim_TERMINATE), a    ; terminate simulation
         halt                       ; terminate real HW

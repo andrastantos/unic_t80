@@ -11,15 +11,7 @@ entity DebugSystem is
     port(
         Reset_n        : in std_logic;
         Clk            : in std_logic;
-        NMI_n        : in std_logic;
-        RXD0        : in std_logic;
-        CTS0        : in std_logic;
-        DSR0        : in std_logic;
-        RI0            : in std_logic;
-        DCD0        : in std_logic;
-        TXD0        : out std_logic;
-        RTS0        : out std_logic;
-        DTR0        : out std_logic
+        NMI_n        : in std_logic
     );
 end DebugSystem;
 
@@ -132,27 +124,15 @@ begin
                 DIn => D,
                 DOut => SRAM_D);
 
-    uart : entity work.T16450
+    uart : entity work.sim_ser
+            generic map(
+				FileName => "_out/uart0_rx.log"
+			)
             port map(
-                MR_n => Reset_s,
-                XIn => Clk,
-                RClk => BaudOut0,
                 CS_n => UART0CS_n,
                 Rd_n => RD_n,
                 Wr_n => IOWR_n,
                 A => A(2 downto 0),
                 D_In => D,
-                D_Out => UART0_D,
-                SIn => RXD0,
-                CTS_n => CTS0,
-                DSR_n => DSR0,
-                RI_n => RI0,
-                DCD_n => DCD0,
-                SOut => TXD0,
-                RTS_n => RTS0,
-                DTR_n => DTR0,
-                OUT1_n => open,
-                OUT2_n => open,
-                BaudOut => BaudOut0,
-                Intr => open);
+                D_Out => UART0_D);
 end;
