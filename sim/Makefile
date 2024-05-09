@@ -43,7 +43,7 @@ zmac/zmac:
 
 _obj/zexall.hex: zexall.asm zmac/zmac
 	-mkdir _obj
-	zmac/zmac $< -o $@
+	zmac/zmac $< -o $@ -o $(@:.hex=.lst)
 
 _obj/zexall.bin: _obj/zexall.hex
 	-mkdir _obj
