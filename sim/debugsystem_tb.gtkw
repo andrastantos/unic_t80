@@ -1,21 +1,21 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Wed May  8 20:51:28 2024
+[*] Thu May  9 18:30:17 2024
 [*]
 [dumpfile] "/home/tantos/unic/cores/unic_t80/sim/_out/debugsystem_tb.vcd"
-[dumpfile_mtime] "Wed May  8 20:51:28 2024"
-[dumpfile_size] 52740096
+[dumpfile_mtime] "Thu May  9 18:30:17 2024"
+[dumpfile_size] 2226270208
 [savefile] "/home/tantos/unic/cores/unic_t80/sim/debugsystem_tb.gtkw"
-[timestart] 1867000000000
+[timestart] 20685700000
 [size] 1920 990
 [pos] -1 -1
-*-39.089367 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-26.727005 21335000000 231905000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] debugsystem_tb.
 [treeopen] debugsystem_tb.ni.
 [treeopen] debugsystem_tb.ni.z80.
 [treeopen] debugsystem_tb.ni.z80.u0.
 [sst_width] 233
-[signals_width] 159
+[signals_width] 451
 [sst_expanded] 1
 [sst_vpaned_height] 522
 @28
@@ -24,22 +24,28 @@ debugsystem_tb.ni.z80.reset_n
 @22
 debugsystem_tb.ni.z80.a[15:0]
 debugsystem_tb.ni.z80.d[7:0]
-@29
+@28
 [color] 2
 debugsystem_tb.ni.z80.iorq_n
-@28
 debugsystem_tb.ni.z80.mreq_n
 debugsystem_tb.ni.z80.rfsh_n
 [color] 1
 debugsystem_tb.ni.z80.wr_n
 debugsystem_tb.ni.z80.rd_n
 debugsystem_tb.ni.z80.m1_n
+@24
 debugsystem_tb.ni.z80.tstate[2:0]
 debugsystem_tb.ni.z80.mcycle[2:0]
 @200
 -UART1
 @28
-debugsystem_tb.ni.uart.txd
+debugsystem_tb.ni.uart.cs_n
+debugsystem_tb.ni.uart.wr_n
+@820
+debugsystem_tb.ni.uart.d_in[7:0]
+@22
+debugsystem_tb.ni.uart.d_in[7:0]
+debugsystem_tb.ni.uart.d_out[7:0]
 @200
 -INTERNAL
 @22
@@ -53,5 +59,33 @@ debugsystem_tb.ni.z80.u0.t_res
 debugsystem_tb.ni.z80.u0.auto_wait_t1
 debugsystem_tb.ni.z80.u0.write
 debugsystem_tb.ni.z80.wr_t2
+@22
+debugsystem_tb.ni.z80.u0.do[7:0]
+debugsystem_tb.ni.z80.u0.regs.dor[127:0]
+@28
+debugsystem_tb.ni.z80.u0.update_do
+@22
+debugsystem_tb.ni.z80.u0.di_reg[7:0]
+@25
+debugsystem_tb.ni.z80.u0.mcode.mcycle[2:0]
+@28
+debugsystem_tb.ni.z80.u0.i_rld
+debugsystem_tb.ni.z80.u0.i_rrd
+debugsystem_tb.ni.z80.u0.i_rxdd
+@200
+-ALU
+@22
+debugsystem_tb.ni.z80.u0.alu.busb[7:0]
+debugsystem_tb.ni.z80.u0.alu.alu_op[3:0]
+@24
+debugsystem_tb.ni.z80.tstate[2:0]
+@22
+debugsystem_tb.ni.z80.u0.set_busb_to[3:0]
+debugsystem_tb.ni.z80.u0.di_reg[7:0]
+debugsystem_tb.ni.z80.u0.di[7:0]
+debugsystem_tb.ni.z80.di_reg[7:0]
+debugsystem_tb.ni.z80.d[7:0]
+@28
+debugsystem_tb.ni.z80.clk_n
 [pattern_trace] 1
 [pattern_trace] 0
