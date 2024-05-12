@@ -1,6 +1,7 @@
 GHDL=ghdl
-GHDLFLAGS= -fsynopsys -fexplicit --std=08
-GHDLRUNFLAGS= --vcd=_out/debugsystem_tb.vcd
+GHDLFLAGS= -fsynopsys -fexplicit --std=08 -O2
+GHDLVCDFLAGS= --vcd=../_out/debugsystem_tb.vcd
+GHDLRUNFLAGS=
 
 # Default target : elaborate
 all: run
@@ -21,7 +22,18 @@ VHDL_SRC =  \
 # Run target
 run: $(VHDL_SRC)
 	-mkdir _out
-	$(GHDL) -c $(GHDLFLAGS) $(VHDL_SRC) -r debugsystem_tb $(GHDLRUNFLAGS)
+	-mkdir _obj
+	cd _obj && $(GHDL) -a $(GHDLFLAGS) $(patsubst %, ../%, $(VHDL_SRC))
+	cd _obj && $(GHDL) -e $(GHDLFLAGS) debugsystem_tb
+	cd _obj && time $(GHDL) -r $(GHDLFLAGS) debugsystem_tb $(GHDLRUNFLAGS) $(GHDLVCDFLAGS)
+
+sim: $(VHDL_SRC)
+	-mkdir _out
+	-mkdir _obj
+	cd _obj && $(GHDL) -a $(GHDLFLAGS) $(patsubst %, ../%, $(VHDL_SRC))
+	cd _obj && $(GHDL) -e $(GHDLFLAGS) debugsystem_tb
+	cd _obj && time $(GHDL) -r $(GHDLFLAGS) debugsystem_tb $(GHDLRUNFLAGS)
+
 
 
 force:
