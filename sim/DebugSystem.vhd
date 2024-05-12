@@ -3,9 +3,18 @@
 -- the NoICE debugger that can be found at
 -- http://www.noicedebugger.com/
 
+-- NOTES:
+-- There's a visual (netlist-based) reference here: https://floooh.github.io/visualz80remix/
+-- the corresponding writeup is here: https://floooh.github.io/2021/12/06/z80-instruction-timing.html
+-- This confirms that prefixed instructions generate two M1-cycles, in fact two referesh cycles as well.A
+--
+-- It also confirms that LDIR (and presumably all other similar ones) re-read the instruction (with M1 and refersh cycles)
+-- for every iteration.
+
 library IEEE;
 use IEEE.std_logic_1164.all;
-use std.env.stop;
+use STD.textio.all;
+use STD.env.stop;
 
 entity DebugSystem is
     port(
@@ -45,6 +54,8 @@ architecture struct of DebugSystem is
 
     signal BaudOut0        : std_logic;
 
+    file sim_log            : text open write_mode is "sim.log";
+
 begin
 
     Wait_n <= '1';
@@ -60,9 +71,9 @@ begin
             Reset_s <= '1';
             if IORQ_n = '0' and WR_n = '0' then
                 case A(7 downto 0) is
-                when "11111111" => -- write to I/O address 0xff sets the 'mirror' bit from D0
+                when "11111110" => -- write to I/O address 0xfe sets the 'mirror' bit from D0
                     Mirror <= D(0);
-                when "11111110" => -- write to I/O address 0xfe terminates the simulation
+                when "11111111" => -- write to I/O address 0xff terminates the simulation
                     stop;
                 when others => null;
                 end case;
@@ -74,6 +85,18 @@ begin
     RAMCS_n   <= '0' when Mirror /= A(15) and MREQ_n = '0' else '1'; -- RAM is from 0x8000 if Mirror is '0', 0x0000 otherwise
     ROMCS_n   <= '0' when Mirror  = A(15) and MREQ_n = '0' else '1'; -- ROM is from 0x0000 if Mirror is '0', 0x8000 otherwise
     UART0CS_n <= '0' when IORQ_n = '0' and A(7 downto 3) = "00000" else '1'; -- 0x00 - 0x07
+
+    process (CLK)
+        variable log_row          : line;
+    begin
+        if Clk'event and Clk = '0' then
+            if M1_n = '0' and RD_n = '0' then
+                --report "M1 at address 0x" & to_hstring(A) & " value 0x" & to_hstring(D);
+                --write(log_row, "M1 at address 0x" & to_hstring(A) & " value 0x" & to_hstring(D));
+                --writeline(sim_log,log_row);
+            end if;
+        end if;
+    end process;
 
     CPU_D <=
         SRAM_D when RAMCS_n = '0' else
@@ -126,7 +149,7 @@ begin
 
     uart : entity work.sim_ser
             generic map(
-				FileName => "_out/uart0_rx.log"
+				FileName => "../_out/uart0_rx.log"
 			)
             port map(
                 CS_n => UART0CS_n,

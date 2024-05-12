@@ -31,8 +31,11 @@ _uart0_LINE_CTRL        =       0x0003
 _uart0_MODEM_CTRL       =       0x0004
 _uart0_LINE_STAT        =       0x0005
 _uart0_MODEM_STAT       =       0x0006
-_sim_TERMINATE = 0xfe
-_bank_MIRROR = 0xff
+
+_sim_CONSOLE = 0x0001
+
+_sim_TERMINATE = 0xff
+_bank_MIRROR = 0xfe
 
         aseg
         ;; Reset vector
@@ -141,28 +144,28 @@ msbtlo  equ     msbt & 0ffh
 
 
 _init_uart:
-        ld      a, 000h                 ; uart0_INT_EN = 0;
-        out     (_uart0_INT_EN), a
-        ld      a, 080h                 ; uart0_LINE_CTRL = 0x80; // set DLAB bit
-        out     (_uart0_LINE_CTRL), a
-        ld      a, 000h                 ; uart0_UART_DIV_H = 0;
-        out     (_uart0_INT_EN), a
-        ld      a, 00ah                 ; uart0_UART_DIV_L = 10;
-        out     (_uart0_DATA), a
-        ld      a, 007h                 ; (0x0 << 7);  // DLAB bit
-        out     (_uart0_LINE_CTRL), a
+;        ld      a, 000h                 ; uart0_INT_EN = 0;
+;        out     (_uart0_INT_EN), a
+;        ld      a, 080h                 ; uart0_LINE_CTRL = 0x80; // set DLAB bit
+;        out     (_uart0_LINE_CTRL), a
+;        ld      a, 000h                 ; uart0_UART_DIV_H = 0;
+;        out     (_uart0_INT_EN), a
+;        ld      a, 00ah                 ; uart0_UART_DIV_L = 10;
+;        out     (_uart0_DATA), a
+;        ld      a, 007h                 ; (0x0 << 7);  // DLAB bit
+;        out     (_uart0_LINE_CTRL), a
         ret
 
 _putchar:
         ld      a,e
-        out     (_uart0_DATA), a
+        out     (_sim_CONSOLE), a
         ret
 
 _putstr:
         ld      a,(de)
         cp '$'
         jr      Z, _putstr_ret$
-        out     (_uart0_DATA), a
+        out     (_sim_CONSOLE), a
         inc de
         jr _putstr
 _putstr_ret$:

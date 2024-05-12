@@ -87,7 +87,7 @@ begin
                 elsif Wr_n = '0' then
                     -- WRITE logic
                     case A is
-                    when "000" =>
+                    when "000" | "001" =>
                         write(OutFile, to_char(D_In));
                         flush(OutFile);
                     when others =>
