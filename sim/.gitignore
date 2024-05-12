@@ -1,2 +1,4 @@
 _obj/**
 _out/**
+ghdl/**
+*.*log
