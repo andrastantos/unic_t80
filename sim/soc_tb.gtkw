@@ -1,0 +1,62 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Mon May 13 00:11:39 2024
+[*]
+[dumpfile] "/home/tantos/unic/cores/unic_t80/sim/_out/soc_tb.vcd"
+[dumpfile_mtime] "Mon May 13 00:07:50 2024"
+[dumpfile_size] 30982144
+[savefile] "/home/tantos/unic/cores/unic_t80/sim/soc_tb.gtkw"
+[timestart] 480690000000
+[size] 1920 990
+[pos] -1 -1
+*-24.883787 480738700000 231905000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] soc_tb.
+[treeopen] soc_tb.dut.
+[treeopen] soc_tb.dut.z80.
+[treeopen] soc_tb.dut.z80.u0.
+[sst_width] 233
+[signals_width] 235
+[sst_expanded] 1
+[sst_vpaned_height] 522
+@28
+soc_tb.dut.clk
+@22
+soc_tb.dut.a[15:0]
+@28
+soc_tb.dut.rd_n
+soc_tb.dut.m1_n
+@22
+soc_tb.dut.z80.u0.dinst[7:0]
+@c00022
+soc_tb.dut.z80.u0.di[7:0]
+@28
+(0)soc_tb.dut.z80.u0.di[7:0]
+(1)soc_tb.dut.z80.u0.di[7:0]
+(2)soc_tb.dut.z80.u0.di[7:0]
+(3)soc_tb.dut.z80.u0.di[7:0]
+(4)soc_tb.dut.z80.u0.di[7:0]
+(5)soc_tb.dut.z80.u0.di[7:0]
+(6)soc_tb.dut.z80.u0.di[7:0]
+(7)soc_tb.dut.z80.u0.di[7:0]
+@1401200
+-group_end
+@24
+soc_tb.dut.z80.u0.tstate[2:0]
+soc_tb.dut.z80.u0.mcycle[2:0]
+@28
+soc_tb.dut.z80.u0.m1_n
+soc_tb.dut.z80.u0.busreq_s
+soc_tb.dut.z80.busrq_n
+@820
+soc_tb.dut.sim_uart.last_data[7:0]
+@28
+soc_tb.dut.uart.txd
+@22
+soc_tb.dut.cpu_di[7:0]
+soc_tb.dut.cpu_do[7:0]
+soc_tb.dut.z80.di[7:0]
+soc_tb.dut.z80.u0.di[7:0]
+@23
+soc_tb.dut.z80.di_reg[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

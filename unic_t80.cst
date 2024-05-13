@@ -8,8 +8,8 @@ IO_LOC  "A[14]"           28;                                                   
 IO_PORT "A[14]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[4]"
 IO_LOC  "A[15]"           26;                                                     // "pin[5]"
 IO_PORT "A[15]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[5]"
-IO_LOC  "CLK_n"           25;                                                     // "pin[6]"
-IO_PORT "CLK_n"           IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[6]"
+//IO_LOC  "CLK_n"           25;                                                     // "pin[6]"
+//IO_PORT "CLK_n"           IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[6]"
 IO_LOC  "D[4]"            47;                                                     // "pin[7]"
 IO_PORT "D[4]"            IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[7]"
 IO_LOC  "D[3]"            48;                                                     // "pin[8]"
@@ -28,10 +28,10 @@ IO_LOC  "D[0]"            63;                                                   
 IO_PORT "D[0]"            IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[14]"
 IO_LOC  "D[1]"            68;                                                     // "pin[15]"
 IO_PORT "D[1]"            IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[15]"
-IO_LOC  "INT_n"           54;                                                     // "pin[16]"
-IO_PORT "INT_n"           IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[16]"
-IO_LOC  "NMI_n"           53;                                                     // "pin[17]"
-IO_PORT "NMI_n"           IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[17]"
+//IO_LOC  "INT_n"           54;                                                     // "pin[16]"
+//IO_PORT "INT_n"           IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[16]"
+//IO_LOC  "NMI_n"           53;                                                     // "pin[17]"
+//IO_PORT "NMI_n"           IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[17]"
 IO_LOC  "HALT_n"          51;                                                     // "pin[18]"
 IO_PORT "HALT_n"          IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[18]"
 IO_LOC  "MREQ_n"          49;                                                     // "pin[19]"
@@ -44,12 +44,12 @@ IO_LOC  "WR_n"            77;                                                   
 IO_PORT "WR_n"            IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[22]"
 IO_LOC  "BUSAK_n"         80;                                                     // "pin[23]"
 IO_PORT "BUSAK_n"         IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[23]"
-IO_LOC  "WAIT_n"          82;                                                     // "pin[24]"
-IO_PORT "WAIT_n"          IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[24]"
-IO_LOC  "BUSRQ_n"         83;                                                     // "pin[25]"
-IO_PORT "BUSRQ_n"         IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[25]"
+//IO_LOC  "WAIT_n"          82;                                                     // "pin[24]"
+//IO_PORT "WAIT_n"          IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[24]"
+//IO_LOC  "BUSRQ_n"         83;                                                     // "pin[25]"
+//IO_PORT "BUSRQ_n"         IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[25]"
 IO_LOC  "RESET_n"         85;                                                     // "pin[26]"
-IO_PORT "RESET_n"         IO_TYPE=LVCMOS33 PULL_MODE=NONE BANK_VCCIO=3.3; // "pin[26]"
+IO_PORT "RESET_n"         IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3; // "pin[26]"
 IO_LOC  "M1_n"            3;                                                      // "pin[27]"
 IO_PORT "M1_n"            IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[27]"
 IO_LOC  "RFSH_n"          11;                                                     // "pin[28]"
@@ -98,6 +98,11 @@ IO_PORT "A[10]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3
 // IO_LOC  "spi_io2"          55;
 // IO_PORT "spi_io2"          IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
 //
-// IO_LOC  "clk27"            52;
-// IO_PORT "clk27"            IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
-//
+IO_LOC  "CLK27"            52;
+IO_PORT "CLK27"            IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// Connect serial port to JTAG connector pint
+IO_LOC  "TXD"              34;
+IO_PORT "TXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC  "RXD"              33;
+IO_PORT "RXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;

@@ -23,12 +23,11 @@ begin
 
 	Reset_n <= '0', '1' after 1 us;
 
-	-- 18 MHz clock
 	Clk <= not Clk after 5 ns;
 
-	terminate: process
-	begin
-		wait for 5*10000000 ns;
-		stop;
-	end process terminate;
+	--terminate: process
+	--begin
+	--	wait for 5*100000*2 ns;
+	--	stop;
+	--end process terminate;
 end;

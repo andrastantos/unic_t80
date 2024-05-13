@@ -24,13 +24,13 @@
 ; along with this program; if not, write to the Free Software
 ; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-_uart0_DATA     =       0x0000
-_uart0_INT_EN   =       0x0001
-_uart0_INT_ID   =       0x0002
-_uart0_LINE_CTRL        =       0x0003
-_uart0_MODEM_CTRL       =       0x0004
-_uart0_LINE_STAT        =       0x0005
-_uart0_MODEM_STAT       =       0x0006
+_uart0_DATA             =       0x0088
+_uart0_INT_EN           =       0x0089
+_uart0_INT_ID           =       0x008a
+_uart0_LINE_CTRL        =       0x008b
+_uart0_MODEM_CTRL       =       0x008c
+_uart0_LINE_STAT        =       0x008d
+_uart0_MODEM_STAT       =       0x008e
 
 _sim_CONSOLE = 0x0001
 
@@ -59,25 +59,8 @@ _bank_MIRROR = 0xfe
 
         .org    0x100
 init:
-;       ;; copy code to RAM and flip the mirror bit over
-;       ld  de,00000h
-;       ld  hl,08000h
-;copy_loop:
-;       ld      a,(de)
-;       ld      (hl),a
-;       inc     de
-;       inc     hl
-;       ld      a,h
-;       cp      0
-;       jr      NZ,copy_loop
-;       ld      a,l
-;       cp      0
-;       jr      NZ,copy_loop
-;       ld      a,1
-;       out (_bank_MIRROR), a
-
         ;; Stack at the top of memory.
-        ld      sp,0ffffh
+        ld      sp,03fffh ; We have 16k of SRAM, put stack at top
         call    _init_uart
         jp      start
 
@@ -142,22 +125,26 @@ msbtlo  equ     msbt & 0ffh
 
 
 
-
+; Setting 115200 (ish) baud-rate, based on a 27MHz clock.
 _init_uart:
-;        ld      a, 000h                 ; uart0_INT_EN = 0;
-;        out     (_uart0_INT_EN), a
-;        ld      a, 080h                 ; uart0_LINE_CTRL = 0x80; // set DLAB bit
-;        out     (_uart0_LINE_CTRL), a
-;        ld      a, 000h                 ; uart0_UART_DIV_H = 0;
-;        out     (_uart0_INT_EN), a
-;        ld      a, 00ah                 ; uart0_UART_DIV_L = 10;
-;        out     (_uart0_DATA), a
-;        ld      a, 007h                 ; (0x0 << 7);  // DLAB bit
-;        out     (_uart0_LINE_CTRL), a
+        ld      a, 000h                 ; uart0_INT_EN = 0;
+        out     (_uart0_INT_EN), a
+        ld      a, 080h                 ; uart0_LINE_CTRL = 0x80; // set DLAB bit
+        out     (_uart0_LINE_CTRL), a
+        ld      a, 000h                 ; uart0_UART_DIV_H = 0;
+        out     (_uart0_INT_EN), a
+        ld      a, 00fh                 ; uart0_UART_DIV_L = 15;
+        out     (_uart0_DATA), a
+        ld      a, 007h                 ; (0x0 << 7);  // DLAB bit
+        out     (_uart0_LINE_CTRL), a
         ret
 
 _putchar:
+        in      a, (_uart0_LINE_STAT)
+        and     a, 020h
+        jr      Z,_putchar
         ld      a,e
+        out     (_uart0_DATA), a
         out     (_sim_CONSOLE), a
         ret
 
@@ -165,6 +152,13 @@ _putstr:
         ld      a,(de)
         cp '$'
         jr      Z, _putstr_ret$
+        ld      b,a
+_putstr_wait$:
+        in      a, (_uart0_LINE_STAT)
+        and     a, 020h
+        jr      Z,_putstr_wait$
+        ld      a,b
+        out     (_uart0_DATA), a
         out     (_sim_CONSOLE), a
         inc de
         jr _putstr
@@ -196,8 +190,8 @@ _putstr_ret$:
 ;        ret
 
 
-start:  ld      hl,(6)
-        ld      sp,hl
+start:  ;ld      hl,(6)
+        ;ld      sp,hl
         ld      de,msg1
         ld      c,9
         call    bdos
@@ -214,10 +208,10 @@ loop:   ld      a,(hl)          ; end of list ?
 done:   ld      de,msg2
         ld      c,9
         call    bdos
-;_flush$:
-;        in      a, (_uart0_LINE_STAT)
-;        and     a, 020h
-;        jr      Z,_flush$
+_flush$:
+        in      a, (_uart0_LINE_STAT)
+        and     a, 020h
+        jr      Z,_flush$
 
         out     (_sim_TERMINATE), a    ; terminate simulation
         halt                       ; terminate real HW

@@ -1,17 +1,20 @@
 GHDL=ghdl
 GHDLFLAGS= -fsynopsys -fexplicit --std=08 -O2
-GHDLVCDFLAGS= --vcd=../_out/debugsystem_tb.vcd
 GHDLRUNFLAGS=
 
 # Default target : elaborate
 all: run
 
 VHDL_SRC =  \
+	../T16450.vhd \
     ../T80_Pack.vhd \
     ../T80a.vhd \
     _obj/test.vhd \
+    _obj/sram_with_init.vhd \
     SSRAM2.vhd \
     sim_ser.vhd \
+    ../soc_top.vhd \
+    soc_TB.vhd \
     DebugSystem.vhd \
     DebugSystem_TB.vhd \
     ../T80.vhd \
@@ -20,19 +23,23 @@ VHDL_SRC =  \
     ../T80_Reg.vhd
 
 # Run target
-run: $(VHDL_SRC)
+elab: $(VHDL_SRC)
 	-mkdir _out
 	-mkdir _obj
 	cd _obj && $(GHDL) -a $(GHDLFLAGS) $(patsubst %, ../%, $(VHDL_SRC))
 	cd _obj && $(GHDL) -e $(GHDLFLAGS) debugsystem_tb
-	cd _obj && time $(GHDL) -r $(GHDLFLAGS) debugsystem_tb $(GHDLRUNFLAGS) $(GHDLVCDFLAGS)
 
-sim: $(VHDL_SRC)
-	-mkdir _out
-	-mkdir _obj
-	cd _obj && $(GHDL) -a $(GHDLFLAGS) $(patsubst %, ../%, $(VHDL_SRC))
-	cd _obj && $(GHDL) -e $(GHDLFLAGS) debugsystem_tb
+run: elab
+	cd _obj && time $(GHDL) -r $(GHDLFLAGS) debugsystem_tb $(GHDLRUNFLAGS) --vcd=../_out/debugsystem_tb.vcd
+
+sim: elab
 	cd _obj && time $(GHDL) -r $(GHDLFLAGS) debugsystem_tb $(GHDLRUNFLAGS)
+
+run_soc: elab
+	cd _obj && time $(GHDL) -r $(GHDLFLAGS) soc_tb $(GHDLRUNFLAGS) --vcd=../_out/soc_tb.vcd
+
+sim_soc: elab
+	cd _obj && time $(GHDL) -r $(GHDLFLAGS) soc_tb $(GHDLRUNFLAGS)
 
 
 
@@ -49,6 +56,10 @@ _obj/test.bin: _obj/test.ihx
 _obj/test.vhd: _obj/zexall.bin sram_template.vhd
 	-mkdir _obj
 	./ram_init.py -i $< -o $@ -t sram_template.vhd -n ROM
+
+_obj/sram_with_init.vhd: _obj/zexall.bin ../SSRAM_template.vhd
+	-mkdir _obj
+	./ram_init.py -i $< -o $@ -t ../SSRAM_template.vhd -n SSRAM_with_init
 
 zmac/zmac:
 	make -C zmac zmac

@@ -1,9 +1,9 @@
 --
--- Asynchronous serial input with binary file log
+-- Inferrable Synchronous SRAM for Leonardo synthesis, no write through!
 --
--- Version : 0146
+-- Version : 0236
 --
--- Copyright (c) 2001 Daniel Wallner (jesus@opencores.org)
+-- Copyright (c) 2002 Daniel Wallner (jesus@opencores.org)
 --
 -- All rights reserved
 --
@@ -38,7 +38,7 @@
 -- you have the latest version of this file.
 --
 -- The latest version of this file can be found at:
---       http://www.opencores.org/cvsweb.shtml/t51/
+--	http://www.opencores.org/cvsweb.shtml/t51/
 --
 -- Limitations :
 --
@@ -49,55 +49,47 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity sim_ser is
-    generic(
-        FileName              : string
+entity $$$ENTITY$$$ is
+	generic(
+		AddrWidth	: integer := 16;
+		DataWidth	: integer := 8
+	);
+	port(
+		Clk			: in std_logic;
+		CE_n		: in std_logic;
+		WE_n		: in std_logic;
+		A			: in std_logic_vector(AddrWidth - 1 downto 0);
+		DIn			: in std_logic_vector(DataWidth - 1 downto 0);
+		DOut		: out std_logic_vector(DataWidth - 1 downto 0)
+	);
+end $$$ENTITY$$$;
+
+architecture behaviour of $$$ENTITY$$$ is
+
+	type Memory_Image is array (natural range <>) of std_logic_vector(DataWidth - 1 downto 0);
+	signal	RAM		: Memory_Image(0 to 2 ** AddrWidth - 1) := (
+$$$CONTENT$$$,
+        others => X"00"
     );
-    port(
---              Clk        : in std_logic;
-        CS_n       : in std_logic;
-        Rd_n       : in std_logic;
-        Wr_n       : in std_logic;
-        A          : in std_logic_vector(2 downto 0);
-        D_In       : in std_logic_vector(7 downto 0);
-        D_Out      : out std_logic_vector(7 downto 0)
-    );
-end sim_ser;
+--	signal	A_r		: std_logic_vector(AddrWidth - 1 downto 0);
 
-architecture behaviour of sim_ser is
-
-    function to_char(
-        constant Byte : std_logic_vector(7 downto 0)
-    ) return character is
-    begin
-        return character'val(to_integer(unsigned(Byte)));
-    end function;
-
-    signal last_data: std_logic_vector(7 downto 0);
 begin
 
-    process (CS_n, Rd_n, Wr_n)
-        type ChFile is file of character;
-        file OutFile : ChFile open write_mode is FileName;
-    begin
-        if CS_n'event or Rd_n'event or Wr_n'event then
-            if CS_n = '0' then
-                if Rd_n = '0' then
-                    -- READ logic
-                    D_Out <= "00000000";
-                elsif Wr_n = '0' then
-                    -- WRITE logic
-                    case A is
-                    when "000" | "001" =>
-                        last_data <= D_In;
-                        write(OutFile, to_char(D_In));
-                        flush(OutFile);
-                    when others =>
-                        null;
-                    end case;
-                end if;
-            end if;
-        end if;
-    end process;
-end;
+	process (Clk)
+	begin
+		if Clk'event and Clk = '1' then
+-- pragma translate_off
+			if not is_x(A) then
+-- pragma translate_on
+				DOut <= RAM(to_integer(unsigned(A(AddrWidth - 1 downto 0))));
+-- pragma translate_off
+			end if;
+-- pragma translate_on
+			if CE_n = '0' and WE_n = '0' then
+				RAM(to_integer(unsigned(A))) <= DIn;
+			end if;
+--			A_r <= A;
+		end if;
+	end process;
 
+end;

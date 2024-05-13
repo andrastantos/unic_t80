@@ -1,0 +1,20 @@
+To build all the VHDL files (and most importantly the initialization for the SRAM),
+one has to run 'make soc_run' or similar in the 'sim' directory.
+
+After that, GoWIN IDE can be used to synthesize the project.
+
+To download the project, SSH into wafer1, and:
+
+open a serial console:
+
+picocom /dev/ttyUSB1 --baud 115200 --imap lfcrlf --echo
+
+to start a serial console on the second serial port of the JTAG programmer (use ctrl-a ctrl-x to exit).
+
+in a different SSH session:
+
+mount /samsung-laptop
+cd /samsung-laptop/tantos/unic/cores/unic_t80/sim
+. ./fpga_run
+
+This will download the FPGA.

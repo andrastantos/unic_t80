@@ -3,14 +3,17 @@
 <Project>
     <Template>FPGA</Template>
     <Version>5</Version>
-    <Device name="GW1N-9C" pn="GW1N-LV9QN88C7/I6">gw1n9c-073</Device>
+    <Device name="GW1N-4D" pn="GW1N-LV4QN88C7/I6">gw1n4d-012</Device>
     <FileList>
+        <File path="T16450.vhd" type="file.vhdl" enable="1"/>
         <File path="T80.vhd" type="file.vhdl" enable="1"/>
         <File path="T80_ALU.vhd" type="file.vhdl" enable="1"/>
         <File path="T80_MCode.vhd" type="file.vhdl" enable="1"/>
         <File path="T80_Pack.vhd" type="file.vhdl" enable="1"/>
         <File path="T80_Reg.vhd" type="file.vhdl" enable="1"/>
         <File path="T80a.vhd" type="file.vhdl" enable="1"/>
+        <File path="sim/_obj/sram_with_init.vhd" type="file.vhdl" enable="1"/>
+        <File path="soc_top.vhd" type="file.vhdl" enable="1"/>
         <File path="unic_t80.cst" type="file.cst" enable="1"/>
         <File path="t80.sdc" type="file.sdc" enable="1"/>
     </FileList>
