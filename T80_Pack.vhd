@@ -211,7 +211,8 @@ package T80_Pack is
 		NoRead                  : out std_logic;
 		Write                   : out std_logic;
 		No_PC                   : out std_logic;
-		XYbit_undoc             : out std_logic
+		XYbit_undoc             : out std_logic;
+		Early_T_Res             : out std_logic
 	);
 	end component;
 

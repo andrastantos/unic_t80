@@ -154,7 +154,7 @@ begin
     D <= CPU_DO when DO_EN_n = '0' else (others => 'Z');
 
     z80 : entity work.T80a_dido
-            generic map(Mode => 1, IOWait => 1, R800_mode => 0)
+            generic map(Mode => 0, IOWait => 1, R800_mode => 0)
             port map(
                 RESET_n => RESET_s,
                 CLK_n   => Clk,

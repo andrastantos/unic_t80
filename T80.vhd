@@ -189,6 +189,8 @@ architecture rtl of T80 is
 	signal IncDecZ              : std_logic;
 
 	-- ALU signals
+	signal BusB_next            : std_logic_vector(7 downto 0);
+	signal BusA_next            : std_logic_vector(7 downto 0);
 	signal BusB                 : std_logic_vector(7 downto 0);
 	signal BusA                 : std_logic_vector(7 downto 0);
 	signal ALU_Q                : std_logic_vector(7 downto 0);
@@ -196,6 +198,7 @@ architecture rtl of T80 is
 
 	-- Registered micro code outputs
 	signal Read_To_Reg_r        : std_logic_vector(4 downto 0);
+	signal Read_To_Reg_rl       : std_logic_vector(4 downto 0);
 	signal Arith16_r            : std_logic;
 	signal Z16_r                : std_logic;
 	signal ALU_Op_r             : std_logic_vector(3 downto 0);
@@ -261,7 +264,13 @@ architecture rtl of T80 is
 	signal No_PC                : std_logic;
 	signal DOR                  : std_logic_vector(127 downto 0);
 	signal Update_DO            : std_logic;
-
+	signal Update_DO2           : std_logic;
+	signal Update_DO_from_save  : std_logic;
+	signal ALU_Op_rl            : std_logic_vector(3 downto 0);
+	signal Save_ALU_rl          : std_logic;
+	signal Early_T_Res          : std_logic;
+	signal T_Res2               : std_logic;
+	signal T_Res_Save           : std_logic;
 begin
 
 	REG <= IntE_FF2 & IntE_FF1 & IStatus & DOR & std_logic_vector(PC) & std_logic_vector(SP) & std_logic_vector(R) & I & Fp & Ap & F & ACC when Alternate = '0'
@@ -341,7 +350,8 @@ begin
 			NoRead      => NoRead,
 			Write       => Write,
 			No_PC       => No_PC,
-			XYbit_undoc => XYbit_undoc);
+			XYbit_undoc => XYbit_undoc,
+			Early_T_Res => Early_T_Res);
 
 	alu : T80_ALU
 		generic map(
@@ -371,7 +381,14 @@ begin
 
 	ClkEn <= CEN and not BusAck;
 
+	-- Somehow have to ensure that T_Res gets asserted a cycle earlier for things such as SLA (HL). That is, for instructions
+	-- that do a read-modify-write to memory.
+	-- OpCodes that are impacted:
+	-- SET/RES b,(hl)
+	-- RLC/RL/RRC/RR/SRA/SRL/SLA/SLL/SWAP (hl)
 	T_Res <= '1' when TState = unsigned(TStates) else '0';
+	T_Res2 <= '1' when (TState = 3) else '0';
+	T_Res_Save <= T_Res2 when Early_T_Res = '1' else T_Res;
 
 	NextIs_XY_Fetch <= '1' when XY_State /= "00" and XY_Ind = '0' and
 							((Set_Addr_To = aXY) or
@@ -383,6 +400,29 @@ begin
 		ALU_Q;
 
 	Update_DO <= '1' when (TState /= 2 or Wait_n = '1') and T_Res = '1' else '0';
+	Update_DO2 <= '1' when TState = 1 and Auto_Wait_t1 = '0' else '0';
+
+	Update_DO_from_save <= '1' when
+		(Early_T_Res = '0' and TState = 1 and Save_ALU_r = '0' and Auto_Wait_t1 = '0' and Read_To_Reg_r = "10110") or
+		(Early_T_Res = '0' and Save_ALU_r  = '1' and ALU_OP_r  /= "0111" and Read_To_Reg_r  = "10110") or -- if NOT a CP operation, that is: we do need the result
+		(Early_T_Res = '1' and Save_ALU_r  = '1' and ALU_OP_r  /= "0111" and Read_To_Reg_rl = "10110")    -- if NOT a CP operation, that is: we do need the result
+		else '0';
+
+	--Save_ALU_rl <= Save_ALU when not (MCycle  = "001" and TState(2) = '0') and (T_Res = '1' or TState = 3) else '0';
+	Save_ALU_rl <= Save_ALU when not (MCycle  = "001" and TState(2) = '0') and (T_Res_Save = '1') else '0';
+	ALU_Op_rl   <= ALU_Op   when not (MCycle  = "001" and TState(2) = '0') and (T_Res = '1' or TState = 3) else "0000";
+
+	process (T_Res, Set_BusA_To, Read_To_Reg, Read_To_Acc) begin
+		Read_To_Reg_rl <= "00000";
+		if T_Res = '1' then
+			Read_To_Reg_rl(3 downto 0) <= Set_BusA_To;
+			Read_To_Reg_rl(4) <= Read_To_Reg;
+			if Read_To_Acc = '1' then
+				Read_To_Reg_rl(3 downto 0) <= "0111";
+				Read_To_Reg_rl(4) <= '1';
+			end if;
+		end if;
+	end process;
 
 	process (RESET_n, CLK_n)
 		variable n : std_logic_vector(7 downto 0);
@@ -440,9 +480,9 @@ begin
 				IStatus <= DIR(209 downto 208);
 
 			elsif ClkEn = '1' then
-				ALU_Op_r <= "0000";
-				Save_ALU_r <= '0';
-				Read_To_Reg_r <= "00000";
+				ALU_Op_r <= ALU_Op_rl;
+				Save_ALU_r <= Save_ALU_rl;
+				Read_To_Reg_r <= Read_To_Reg_rl;
 
 				MCycles <= MCycles_d;
 
@@ -629,9 +669,6 @@ begin
 						if SetWZ = "11" then
 							WZ <= std_logic_vector(ID16);
 						end if;
-
-						Save_ALU_r <= Save_ALU;
-						ALU_Op_r <= ALU_Op;
 
 						if Mode = 3 then
 							if I_CPL = '1' then
@@ -831,26 +868,18 @@ begin
 					-- Keep D0 from M3 for RLD/RRD (Sorgelig)
 					I_RXDD <= I_RLD or I_RRD;
 					if I_RXDD='0' then
-						DO <= BusB;
+						DO <= BusB_next;
 					end if;
 					if I_RLD = '1' then
-						DO(3 downto 0) <= BusA(3 downto 0);
-						DO(7 downto 4) <= BusB(3 downto 0);
+						DO(3 downto 0) <= BusA_next(3 downto 0);
+						DO(7 downto 4) <= BusB_next(3 downto 0);
 					end if;
 					if I_RRD = '1' then
-						DO(3 downto 0) <= BusB(7 downto 4);
-						DO(7 downto 4) <= BusA(3 downto 0);
+						DO(3 downto 0) <= BusB_next(7 downto 4);
+						DO(7 downto 4) <= BusA_next(3 downto 0);
 					end if;
 				end if;
 
-				if T_Res = '1' then
-					Read_To_Reg_r(3 downto 0) <= Set_BusA_To;
-					Read_To_Reg_r(4) <= Read_To_Reg;
-					if Read_To_Acc = '1' then
-						Read_To_Reg_r(3 downto 0) <= "0111";
-						Read_To_Reg_r(4) <= '1';
-					end if;
-				end if;
 
 				if TState = 1 and I_BT = '1' then
 					F(Flag_X) <= ALU_Q(3);
@@ -885,20 +914,14 @@ begin
 						end if;
 					when others =>
 					end case;
-				end if;
-
-				if (Update_DO = '1' and Save_ALU_r = '0') or
-					(Save_ALU_r = '1' and ALU_OP_r /= "0111") then
-					case Read_To_Reg_r is
-					when "10110" =>
-						DO <= Save_Mux;
-					when others =>
-					end case;
 					if XYbit_undoc='1' then
 						DO <= ALU_Q;
 					end if;
 				end if;
 
+				if Update_DO_from_save = '1' then
+					DO <= Save_Mux;
+				end if;
 			end if;
 		end if;
 	end process;
@@ -1113,67 +1136,78 @@ begin
 -- Buses
 --
 ---------------------------------------------------------------------------
+	process (Set_BusB_To, ACC, RegBusB, DI_Reg, SP, F, PC, IR, out0, XYbit_undoc)
+	begin
+		case Set_BusB_To is
+		when "0111" =>
+			BusB_next <= ACC;
+		when "0000" | "0001" | "0010" | "0011" | "0100" | "0101" =>
+			if Set_BusB_To(0) = '1' then
+				BusB_next <= RegBusB(7 downto 0);
+			else
+			BusB_next <= RegBusB(15 downto 8);
+			end if;
+		when "0110" =>
+			BusB_next <= DI_Reg;
+			when "1000" =>
+			BusB_next <= std_logic_vector(SP(7 downto 0));
+		when "1001" =>
+			BusB_next <= std_logic_vector(SP(15 downto 8));
+		when "1010" =>
+			BusB_next <= "00000001";
+		when "1011" =>
+			BusB_next <= F;
+		when "1100" =>
+			BusB_next <= std_logic_vector(PC(7 downto 0));
+		when "1101" =>
+			BusB_next <= std_logic_vector(PC(15 downto 8));
+		when "1110" =>
+			if IR = x"71" and out0 = '1' then
+				BusB_next <= "11111111";
+			else
+			BusB_next <= "00000000";
+			end if;
+		when others =>
+			BusB_next <= "--------";
+		end case;
+		if XYbit_undoc='1' then
+			BusB_next <= DI_Reg;
+		end if;
+	end process;
+
+	process (Set_BusA_To, ACC, RegBusA, DI_Reg, SP, XYbit_undoc)
+	begin
+		case Set_BusA_To is
+		when "0111" =>
+			BusA_next <= ACC;
+		when "0000" | "0001" | "0010" | "0011" | "0100" | "0101" =>
+			if Set_BusA_To(0) = '1' then
+				BusA_next <= RegBusA(7 downto 0);
+			else
+			BusA_next <= RegBusA(15 downto 8);
+			end if;
+		when "0110" =>
+			BusA_next <= DI_Reg;
+		when "1000" =>
+			BusA_next <= std_logic_vector(SP(7 downto 0));
+		when "1001" =>
+			BusA_next <= std_logic_vector(SP(15 downto 8));
+		when "1010" =>
+			BusA_next <= "00000000";
+		when others =>
+			BusA_next <= "--------";
+		end case;
+		if XYbit_undoc='1' then
+			BusA_next <= DI_Reg;
+		end if;
+	end process;
+
 	process (CLK_n)
 	begin
 		if rising_edge(CLK_n) then
 			if ClkEn = '1' then
-				case Set_BusB_To is
-				when "0111" =>
-					BusB <= ACC;
-				when "0000" | "0001" | "0010" | "0011" | "0100" | "0101" =>
-					if Set_BusB_To(0) = '1' then
-						BusB <= RegBusB(7 downto 0);
-					else
-						BusB <= RegBusB(15 downto 8);
-					end if;
-				when "0110" =>
-					BusB <= DI_Reg;
-				when "1000" =>
-					BusB <= std_logic_vector(SP(7 downto 0));
-				when "1001" =>
-					BusB <= std_logic_vector(SP(15 downto 8));
-				when "1010" =>
-					BusB <= "00000001";
-				when "1011" =>
-					BusB <= F;
-				when "1100" =>
-					BusB <= std_logic_vector(PC(7 downto 0));
-				when "1101" =>
-					BusB <= std_logic_vector(PC(15 downto 8));
-				when "1110" =>
-					if IR = x"71" and out0 = '1' then
-						BusB <= "11111111";
-					else
-					BusB <= "00000000";
-					end if;
-				when others =>
-					BusB <= "--------";
-				end case;
-
-				case Set_BusA_To is
-				when "0111" =>
-					BusA <= ACC;
-				when "0000" | "0001" | "0010" | "0011" | "0100" | "0101" =>
-					if Set_BusA_To(0) = '1' then
-						BusA <= RegBusA(7 downto 0);
-					else
-						BusA <= RegBusA(15 downto 8);
-					end if;
-				when "0110" =>
-					BusA <= DI_Reg;
-				when "1000" =>
-					BusA <= std_logic_vector(SP(7 downto 0));
-				when "1001" =>
-					BusA <= std_logic_vector(SP(15 downto 8));
-				when "1010" =>
-					BusA <= "00000000";
-				when others =>
-					BusA <= "--------";
-				end case;
-				if XYbit_undoc='1' then
-					BusA <= DI_Reg;
-					BusB <= DI_Reg;
-				end if;
+				BusB <= BusB_next;
+				BusA <= BusA_next;
 			end if;
 		end if;
 	end process;

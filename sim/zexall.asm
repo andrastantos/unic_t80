@@ -59,6 +59,18 @@ _bank_MIRROR = 0xfe
 
         .org    0x100
 init:
+;        ;; SIMPLE TEST FOR load
+;        ld      a,042h
+;        ld      bc,04344h
+;        ld      de,04546h
+;        ld      hl, 03210h
+;        ld      (hl), 012h
+;        add     a,(hl)
+;        cp      a,054h
+;        jz      0
+;        out     (_sim_TERMINATE), a    ; terminate simulation
+;        halt                       ; terminate real HW
+
         ;; Stack at the top of memory.
         ld      sp,03fffh ; We have 16k of SRAM, put stack at top
         call    _init_uart
@@ -189,34 +201,7 @@ _putstr_ret$:
 ;_putstr_ret$:
 ;        ret
 
-
-start:  ;ld      hl,(6)
-        ;ld      sp,hl
-        ld      de,msg1
-        ld      c,9
-        call    bdos
-
-        ld      hl,tests        ; first test case
-loop:   ld      a,(hl)          ; end of list ?
-        inc     hl
-        or      (hl)
-        jp      z,done
-        dec     hl
-        call    stt
-        jp      loop
-
-done:   ld      de,msg2
-        ld      c,9
-        call    bdos
-_flush$:
-        in      a, (_uart0_LINE_STAT)
-        and     a, 020h
-        jr      Z,_flush$
-
-        out     (_sim_TERMINATE), a    ; terminate simulation
-        halt                       ; terminate real HW
-        jp      0               ; warm boot
-
+        .org    017Bh
 tests:
         dw      adc16
         dw      add16
@@ -400,7 +385,7 @@ cpd1:   db      0ffh            ; flag mask
         tstr    0edh,0a9h,0,0,0c7b6h,072b4h,018f6h,msbt+17,08dbdh,1,0c0h,030h,094a3h
         tstr    0,010h,0,0,0,0,0,0,0,010,0,-1,0         ; (1024 cycles)
         tstr    0,0,0,0,0,0,0,0,0,0,0d7h,0,0            ; (6 cycles)
-        db      0a4h,082h,0fdh,0cah                     ; expected crc
+        db      0d8h,042h,029h,005h                     ; expected crc
         tmsg    'cpd<r>........................'
 
 ; cpi<r> (1) (6144 cycles)
@@ -1676,3 +1661,90 @@ crctab: db      000h,000h,000h,000h
         db      05ah,005h,0dfh,01bh
         db      02dh,002h,0efh,08dh
 
+
+
+
+start:
+        call    rrd_test
+        call    rlc_test
+        call    bit_test
+        call    adc16_test
+        ld      de,msg1
+        ld      c,9
+        call    bdos
+
+        ld      hl,tests        ; first test case
+loop:   ld      a,(hl)          ; end of list ?
+        inc     hl
+        or      (hl)
+        jp      z,done
+        dec     hl
+        call    stt
+        jp      loop
+
+done:   ld      de,msg2
+        ld      c,9
+        call    bdos
+_flush$:
+        in      a, (_uart0_LINE_STAT)
+        and     a, 020h
+        jr      Z,_flush$
+
+        out     (_sim_TERMINATE), a    ; terminate simulation
+        halt                       ; terminate real HW
+        jp      0               ; warm boot
+
+rrd_test:
+        ld      a, 0x34
+        ld      hl, rrd_test_data
+        rrd
+        ret
+
+rlc_test:
+        ld      a, 0x34
+        ld      hl, rrd_test_data
+        rlc     (hl)
+        rlc     (hl)
+        rlc     (hl)
+        rlc     (hl)
+        rlc     (hl)
+        rlc     (hl)
+        rlc     (hl)
+        rlc     (hl)
+        ret
+
+adc16_test:
+        ld      hl, 0x1234
+        ld      bc, 0x2345
+        scf
+        ccf
+        adc     hl,bc
+        ld      b,h
+        ld      c,l
+        ld      hl, rrd_test_data
+        ld      (hl), b
+        inc     hl
+        ld      (hl), c
+
+        ld      hl, 0x1234
+        ld      bc, 0x2345
+        scf
+        adc     hl,bc
+        ld      b,h
+        ld      c,l
+        ld      hl, rrd_test_data
+        ld      (hl), b
+        inc     hl
+        ld      (hl), c
+        ret
+
+bit_test:
+        ld      hl, rrd_test_data
+        ld      a, 0xf0
+        ld      (hl),a
+        set     3, (hl)
+        res     6, (hl)
+        ret
+
+rrd_test_data:
+        db      0x56, 0x00

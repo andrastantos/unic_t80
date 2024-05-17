@@ -152,7 +152,8 @@ entity T80_MCode is
       NoRead      : out std_logic;
       Write       : out std_logic;
       No_PC       : out std_logic;
-      XYbit_undoc : out std_logic
+      XYbit_undoc : out std_logic;
+	  Early_T_Res : out std_logic
    );
 end T80_MCode;
 
@@ -259,6 +260,7 @@ begin
 		No_PC <= '0';
 		XYbit_undoc <= '0';
 		SetWZ <= "00";
+		Early_T_Res <= '0';
 
 		case ISet is
 		when "00" =>
@@ -1618,7 +1620,10 @@ begin
 					Save_ALU <= '1';
 					Set_Addr_To <= aXY;
 					TStates <= "100";
+					Early_T_Res <= '1';
 				when 3 =>
+					Early_T_Res <= '1';
+					TStates <= "011";
 					Write <= '1';
 				when others =>
 				end case;
@@ -1689,7 +1694,9 @@ begin
 						Save_ALU <= '1';
 						Set_Addr_To <= aXY;
 						TStates <= "100";
+						Early_T_Res <= '1';
 					when 3 =>
+						Early_T_Res <= '1';
 						Write <= '1';
 					when others => null;
 					end case;
@@ -1707,7 +1714,9 @@ begin
 					Save_ALU <= '1';
 					Set_Addr_To <= aXY;
 					TStates <= "100";
+					Early_T_Res <= '1';
 				when 3 =>
+					Early_T_Res <= '1';
 					Write <= '1';
 				when others => null;
 				end case;
@@ -1739,7 +1748,9 @@ begin
 						Save_ALU <= '1';
 						Set_Addr_To <= aXY;
 						TStates <= "100";
+						Early_T_Res <= '1';
 					when 3 =>
+						Early_T_Res <= '1';
 						Write <= '1';
 					when others => null;
 					end case;
@@ -1757,7 +1768,9 @@ begin
 					Save_ALU <= '1';
 					Set_Addr_To <= aXY;
 					TStates <= "100";
+					Early_T_Res <= '1';
 				when 3 =>
+					Early_T_Res <= '1';
 					Write <= '1';
 				when others => null;
 				end case;
@@ -2048,9 +2061,9 @@ begin
 					ALU_Op <= "1101";
 					Save_ALU <= '1';
 					No_PC <= '1';
+					I_RLD <= '1';
 				when 3 =>
 					TStates <= "100";
-					I_RLD <= '1';
 					NoRead <= '1';
 					Set_Addr_To <= aXY;
 				when 4 =>
@@ -2070,9 +2083,9 @@ begin
 					ALU_Op <= "1110";
 					Save_ALU <= '1';
 					No_PC <= '1';
+					I_RRD <= '1';
 				when 3 =>
 					TStates <= "100";
-					I_RRD <= '1';
 					NoRead <= '1';
 					Set_Addr_To <= aXY;
 				when 4 =>
