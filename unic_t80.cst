@@ -1,11 +1,22 @@
 IO_LOC  "A[11]"           29;                                                     // "pin[1]"
 IO_PORT "A[11]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[1]"
-IO_LOC  "A[12]"           30;                                                     // "pin[2]"
+
+// Moving this out of the power pin
+//IO_LOC  "A[12]"           30;                                                     // "pin[2]"
+//IO_PORT "A[12]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[2]"
+IO_LOC  "A[12]"           73;                                                     // "pin[2]"
 IO_PORT "A[12]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[2]"
+
 IO_LOC  "A[13]"           27;                                                     // "pin[3]"
 IO_PORT "A[13]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[3]"
-IO_LOC  "A[14]"           28;                                                     // "pin[4]"
+
+// Moving this out of the power pin
+//IO_LOC  "A[14]"           28;                                                     // "pin[4]"
+//IO_PORT "A[14]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[4]"
+IO_LOC  "A[14]"           81;                                                     // "pin[4]"
 IO_PORT "A[14]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[4]"
+
+
 IO_LOC  "A[15]"           26;                                                     // "pin[5]"
 IO_PORT "A[15]"           IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3; // "pin[5]"
 //IO_LOC  "CLK_n"           25;                                                     // "pin[6]"
