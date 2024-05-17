@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon May 13 00:11:39 2024
+[*] Fri May 17 21:33:14 2024
 [*]
 [dumpfile] "/home/tantos/unic/cores/unic_t80/sim/_out/soc_tb.vcd"
-[dumpfile_mtime] "Mon May 13 00:07:50 2024"
-[dumpfile_size] 30982144
+[dumpfile_mtime] "Fri May 17 20:44:52 2024"
+[dumpfile_size] 1533708
 [savefile] "/home/tantos/unic/cores/unic_t80/sim/soc_tb.gtkw"
-[timestart] 480690000000
+[timestart] 2650000000
 [size] 1920 990
 [pos] -1 -1
-*-24.883787 480738700000 231905000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-31.116058 12191500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] soc_tb.
 [treeopen] soc_tb.dut.
 [treeopen] soc_tb.dut.z80.
@@ -17,46 +17,80 @@
 [sst_width] 233
 [signals_width] 235
 [sst_expanded] 1
-[sst_vpaned_height] 522
+[sst_vpaned_height] 590
 @28
 soc_tb.dut.clk
 @22
 soc_tb.dut.a[15:0]
 @28
+soc_tb.dut.rfsh_n
+soc_tb.dut.z80.iorq_n
+soc_tb.dut.z80.mreq_n
 soc_tb.dut.rd_n
+[color] 1
+soc_tb.dut.z80.wr_n
+[color] 3
 soc_tb.dut.m1_n
 @22
-soc_tb.dut.z80.u0.dinst[7:0]
-@c00022
-soc_tb.dut.z80.u0.di[7:0]
+soc_tb.dut.d[7:0]
+soc_tb.dut.z80.di[7:0]
+soc_tb.dut.z80.do[7:0]
 @28
-(0)soc_tb.dut.z80.u0.di[7:0]
-(1)soc_tb.dut.z80.u0.di[7:0]
-(2)soc_tb.dut.z80.u0.di[7:0]
-(3)soc_tb.dut.z80.u0.di[7:0]
-(4)soc_tb.dut.z80.u0.di[7:0]
-(5)soc_tb.dut.z80.u0.di[7:0]
-(6)soc_tb.dut.z80.u0.di[7:0]
-(7)soc_tb.dut.z80.u0.di[7:0]
-@1401200
--group_end
+soc_tb.dut.z80.do_en_n
 @24
-soc_tb.dut.z80.u0.tstate[2:0]
+soc_tb.dut.z80.u0.tstates[2:0]
+soc_tb.dut.z80.u0.mcycles[2:0]
 soc_tb.dut.z80.u0.mcycle[2:0]
+soc_tb.dut.z80.u0.tstate[2:0]
 @28
-soc_tb.dut.z80.u0.m1_n
 soc_tb.dut.z80.u0.busreq_s
 soc_tb.dut.z80.busrq_n
 @820
 soc_tb.dut.sim_uart.last_data[7:0]
 @28
 soc_tb.dut.uart.txd
+soc_tb.dut.z80.u0.save_alu
+soc_tb.dut.z80.u0.save_alu_r
+soc_tb.dut.z80.u0.save_alu_rl
 @22
-soc_tb.dut.cpu_di[7:0]
-soc_tb.dut.cpu_do[7:0]
-soc_tb.dut.z80.di[7:0]
-soc_tb.dut.z80.u0.di[7:0]
-@23
-soc_tb.dut.z80.di_reg[7:0]
+soc_tb.dut.z80.u0.save_mux[7:0]
+@28
+soc_tb.dut.z80.u0.t_res
+soc_tb.dut.z80.u0.t_res2
+soc_tb.dut.z80.u0.t_res_save
+@22
+soc_tb.dut.z80.u0.alu_op_r[3:0]
+soc_tb.dut.z80.u0.alu_op_rl[3:0]
+@29
+soc_tb.dut.z80.u0.early_t_res
+@28
+soc_tb.dut.z80.u0.update_do_from_save
+@22
+soc_tb.dut.z80.u0.alu_op_r[3:0]
+@200
+-ALU
+@22
+soc_tb.dut.z80.u0.alu.f_out[7:0]
+soc_tb.dut.z80.u0.alu_q[7:0]
+soc_tb.dut.z80.u0.alu.f_in[7:0]
+soc_tb.dut.z80.u0.alu.busa[7:0]
+soc_tb.dut.z80.u0.alu.busb[7:0]
+@28
+soc_tb.dut.z80.u0.alu.usecarry
+@22
+soc_tb.dut.z80.u0.alu.alu_op[3:0]
+@28
+soc_tb.dut.z80.u0.save_alu_r
+soc_tb.dut.z80.u0.read_to_reg_r[4:0]
+soc_tb.dut.z80.u0.read_to_reg_rl[4:0]
+soc_tb.dut.z80.u0.t_res
+soc_tb.dut.z80.mreq_inhibit
+soc_tb.dut.z80.req_inhibit
+soc_tb.dut.z80.mreq
+@22
+soc_tb.dut.z80.u0.set_busa_to[3:0]
+soc_tb.dut.z80.u0.set_busb_to[3:0]
+@28
+soc_tb.dut.z80.u0.save_alu_r
 [pattern_trace] 1
 [pattern_trace] 0
