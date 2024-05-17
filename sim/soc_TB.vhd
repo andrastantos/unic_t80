@@ -40,9 +40,9 @@ begin
     -- Running off of a 27MHz clock.
 	Clk <= not Clk after 18.5 ns;
 
-	--terminate: process
-	--begin
-	--	wait for 5*100000*2 ns;
-	--	stop;
-	--end process terminate;
+	terminate: process
+	begin
+		wait for 100 us;
+		stop;
+	end process terminate;
 end;
