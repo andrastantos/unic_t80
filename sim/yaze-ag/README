@@ -1,0 +1,9 @@
+This is the yaze-ag simulator, slightly modified to provide a
+similar environment for execution to that of SIM_TB.VHD.
+
+This allows for reference execution of zexall.
+
+The source is from:
+
+https://www.mathematik.uni-ulm.de/users/ag/yaze-ag/devel/yaze-ag-2.51.3.tar.gz
+
