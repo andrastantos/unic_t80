@@ -3,6 +3,12 @@
 -- T80(c) core. Attempt to finish all undocumented features and provide
 --              accurate timings.
 --
+-- The Z80A core is quite a bit more compatible with original Z80A timings
+-- on the bus interface. Also, z80a_dido wrapper added which is asynchronous,
+-- but splits out data in and out buses so that a wrapper can be used before
+-- tri-state buffers are inferred at the periphery.
+--
+-- ****
 -- Version 351.
 -- Merged Gameboy fixes from Bruno Duarte Gouveia (brNX)
 -- Passes Blargg's test ROMs
