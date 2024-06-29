@@ -1,0 +1,2 @@
+#!/bin/bash
+openFPGALoader --freq 2500000 -f impl/pnr/unic_t80.fs
