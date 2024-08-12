@@ -1,5 +1,5 @@
-#create_project -name TTT -pn GW1NR-LV4QN88C6/I5 -device_version D
-set_device GW1NR-LV4QN88C6/I5 -device_version D
+#create_project -name TTT -pn GW1NR-LV9QN88C6/I5 -device_version C
+set_device GW1NR-LV9QN88C6/I5 -device_version C
 
 add_file ../T80.vhd
 add_file ../T80_ALU.vhd
@@ -11,6 +11,7 @@ add_file oled_ctrl.sv
 add_file soc_top.sv
 add_file unic_t80.cst
 add_file unic_t80.sdc
+add_file unic_t80.rao
 
 set_option -verilog_std sysv2017
 set_option -gen_text_timing_rpt 1

@@ -15,12 +15,14 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use STD.textio.all;
 use STD.env.stop;
+use ieee.numeric_std.all;
 
 entity DebugSystem is
     port(
         Reset_n        : in std_logic;
         Clk            : in std_logic;
-        NMI_n        : in std_logic
+        NMI_n          : in std_logic;
+        INT_n          : in std_logic
     );
 end DebugSystem;
 
@@ -34,7 +36,6 @@ architecture struct of DebugSystem is
     signal RFSH_n        : std_logic;
     signal HALT_n        : std_logic;
     signal WAIT_n        : std_logic;
-    signal INT_n        : std_logic;
     signal RESET_s        : std_logic;
     signal BUSRQ_n        : std_logic;
     signal BUSAK_n        : std_logic;
@@ -56,11 +57,50 @@ architecture struct of DebugSystem is
 
     file sim_log            : text open write_mode is "sim.log";
 
+    signal wait_cnt : unsigned(7 downto 0);
+
 begin
 
-    Wait_n <= '1';
+    --Wait_n <= '1';
     BusRq_n <= '1';
-    INT_n <= '1';
+
+    -- Wait timer
+    -- This version adds 5 wait-states to every cycle
+    --process (Reset_n, Clk)
+    --begin
+    --    if Reset_n = '0' then
+    --        wait_cnt <= (others => '0');
+    --    elsif Clk'event and Clk = '1' then
+    --        if MREQ_n = '0' then
+    --            wait_cnt <= wait_cnt + 1;
+    --            if wait_cnt > 5 then
+    --                WAIT_n <= '1';
+    --            else
+    --                WAIT_n <= '0';
+    --            end if;
+    --        else
+    --            wait_cnt <= (others => '0');
+    --            WAIT_n <= '1';
+    --        end if;
+    --    end if;
+    --end process;
+
+    -- This version creates a 25% duty-cycle free-running counter
+    process (Reset_n, Clk)
+    begin
+        if Reset_n = '0' then
+            wait_cnt <= (others => '0');
+        elsif Clk'event and Clk = '1' then
+            wait_cnt <= wait_cnt + 1;
+            if wait_cnt = 3 then
+                wait_cnt <= (others => '0');
+                WAIT_n <= '1';
+            else
+                WAIT_n <= '0';
+            end if;
+        end if;
+    end process;
+
 
     process (Reset_n, Clk)
     begin

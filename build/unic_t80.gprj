@@ -1,0 +1,20 @@
+<?xml version="1" encoding="UTF-8"?>
+<!DOCTYPE gowin-fpga-project>
+<Project>
+    <Template>FPGA</Template>
+    <Version>5</Version>
+    <Device name="GW1NR-9C" pn="GW1NR-LV9QN88C7/I6">gw1nr9c-017</Device>
+    <FileList>
+        <File path="oled_ctrl.sv" type="file.verilog" enable="1"/>
+        <File path="soc_top.sv" type="file.verilog" enable="1"/>
+        <File path="/home/tantos/unic_stuff/unic_cores/unic_t80/T80.vhd" type="file.vhdl" enable="1"/>
+        <File path="/home/tantos/unic_stuff/unic_cores/unic_t80/T80_ALU.vhd" type="file.vhdl" enable="1"/>
+        <File path="/home/tantos/unic_stuff/unic_cores/unic_t80/T80_MCode.vhd" type="file.vhdl" enable="1"/>
+        <File path="/home/tantos/unic_stuff/unic_cores/unic_t80/T80_Pack.vhd" type="file.vhdl" enable="1"/>
+        <File path="/home/tantos/unic_stuff/unic_cores/unic_t80/T80_Reg.vhd" type="file.vhdl" enable="1"/>
+        <File path="/home/tantos/unic_stuff/unic_cores/unic_t80/T80a.vhd" type="file.vhdl" enable="1"/>
+        <File path="unic_t80.cst" type="file.cst" enable="1"/>
+        <File path="unic_t80.sdc" type="file.sdc" enable="1"/>
+        <File path="unic_t80.rao" type="file.gao" enable="1"/>
+    </FileList>
+</Project>

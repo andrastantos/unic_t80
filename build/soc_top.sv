@@ -28,11 +28,18 @@ module t80_top (
     output logic HALT_n,
     output logic BUSAK_n,
     output logic [15:0] A,
-	inout logic [7:0] D
+	inout logic [7:0] D,
+
+    output logic GND,
+
+    output logic TXD
 );
     logic [7:0] CPU_DI;
     logic [7:0] CPU_DO;
     logic DO_EN_n;
+
+    //assign GND = 1'b0;
+    assign GND = 1'bz;
 
     logic oled_clk;
 
@@ -40,8 +47,9 @@ module t80_top (
         .OSCOUT(oled_clk)
     );
 
-    defparam osc_inst.FREQ_DIV = 10; // Sets clk to about 21MHz
-    defparam osc_inst.DEVICE = "GW1NR-4D";
+    //defparam osc_inst.FREQ_DIV = 10; // Sets clk to about 21MHz
+    defparam osc_inst.FREQ_DIV = 20; // Sets clk to about 21MHz
+    defparam osc_inst.DEVICE = "GW1NR-9C";
 
 
     logic busy;
@@ -53,7 +61,7 @@ module t80_top (
     logic [31:0] refresh_divider;
     logic refresh;
     logic lcd_nrst;
-
+    logic DBG_out;
 
     always @(posedge oled_clk) begin
         if (refresh_divider == 10000000) begin
@@ -103,6 +111,8 @@ module t80_top (
     assign CPU_DI = D;
     assign D = ~DO_EN_n ? CPU_DO : 8'bZ;
 
+
+
     T80a_dido #(
         .Mode(0),
         .IOWait(1),
@@ -125,8 +135,32 @@ module t80_top (
         .A       (A       ),
         .DI      (CPU_DI  ),
         .DO      (CPU_DO  ),
-        .DO_EN_n (DO_EN_n )
+        .DO_EN_n (DO_EN_n ),
+        .DBG_out (DBG_out )
     );
+
+    // We create a signal that fires when we get an IRQ while an NMI is in progress
+    logic prev_int_n;
+    logic int_edge;
+    logic int_while_nmi;
+
+    always @(posedge CLK_n) prev_int_n <= INT_n;
+    always @(posedge CLK_n) int_edge <= prev_int_n & ~INT_n;
+    assign int_while_nmi = ~NMI_n & int_edge;
+    assign TXD = DBG_out;
+
+    // Analyzer helpers
+    // NOTE: mem and I/O cycles end on a falling edge, while M1 cycles end on a rising one. Lovely!
+    logic mem_rd;
+    logic mem_wr;
+    logic io_rd;
+    logic io_wr;
+
+    assign mem_rd = MREQ_n | RD_n;
+    assign mem_wr = MREQ_n | WR_n;
+    assign io_rd = IORQ_n | RD_n;
+    assign io_wr = IORQ_n | WR_n;
+
 
 endmodule
 

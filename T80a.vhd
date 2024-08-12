@@ -234,13 +234,9 @@ begin
    process (Reset_s,CLK_n)
    begin
       if Reset_s = '0' then
-         Req_Inhibit <= '1';  -- Charlie Ingley 30/10/19 - changed Req_Inhibit polarity
+         Req_Inhibit <= '1';
       elsif CLK_n'event and CLK_n = '1' then
-         if MCycle = "001" and TState = "010" and WAIT_n = '1' then  -- by Fabio Belavenuto - fix behavior of Wait_n
-            Req_Inhibit <= '0';
-         else
-            Req_Inhibit <= '1';
-         end if;
+         Req_Inhibit <= MReq_Inhibit;
       end if;
    end process;
 
@@ -381,7 +377,11 @@ entity T80a_dido is
 		A               : out std_logic_vector(15 downto 0);
 		DI              : in std_logic_vector(7 downto 0);
 		DO              : out std_logic_vector(7 downto 0);
-      DO_EN_n         : out std_logic
+      DO_EN_n         : out std_logic;
+
+
+      -- debug signals
+      DBG_out         : out std_logic
 	);
 end T80a_dido;
 
@@ -416,8 +416,11 @@ architecture rtl of T80a_dido is
 	signal Wait_s               : std_logic;
 	signal MCycle               : std_logic_vector(2 downto 0);
 	signal TState               : std_logic_vector(2 downto 0);
+   signal DBG                  : std_logic;
+   signal IntE                 : std_logic;
 
 begin
+   DBG_out <= DBG;
 
 	CEN <= '1';
 
@@ -473,7 +476,9 @@ begin
 			DO => DO,
 			MC => MCycle,
 			TS => TState,
-			IntCycle_n => IntCycle_n);
+			IntCycle_n => IntCycle_n,
+         IntE => IntE,
+         DBG => DBG);
 
 	process (CLK_n)
 	begin
@@ -513,13 +518,9 @@ begin
    process (Reset_s,CLK_n)
    begin
       if Reset_s = '0' then
-         Req_Inhibit <= '1';  -- Charlie Ingley 30/10/19 - changed Req_Inhibit polarity
+         Req_Inhibit <= '1';
       elsif CLK_n'event and CLK_n = '1' then
-         if MCycle = "001" and TState = "010" and WAIT_n = '1' then  -- by Fabio Belavenuto - fix behavior of Wait_n
-            Req_Inhibit <= '0';
-         else
-            Req_Inhibit <= '1';
-         end if;
+         Req_Inhibit <= MReq_Inhibit;
       end if;
    end process;
 

@@ -64,3 +64,9 @@ __pycache__
 #*.user
 
 **/test_code/**
+
+build/impl*/**
+build/*.prn
+*/xxx/**
+build/*.gtkw
+build/*.gwd

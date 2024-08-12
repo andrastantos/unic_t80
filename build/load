@@ -1,2 +1,6 @@
 #!/bin/bash
-openFPGALoader --freq 2500000 impl/pnr/unic_t80.fs
+if [ -f impl/pnr/ao_0.fs ]; then
+	openFPGALoader --freq 2500000 impl/pnr/ao_0.fs
+else
+	openFPGALoader --freq 2500000 impl/pnr/unic_t80.fs
+fi

@@ -1,0 +1,124 @@
+<?xml version="1" encoding="UTF-8"?>
+<GAO_CONFIG>
+    <Version>3.0</Version>
+    <Mode>Standard</Mode>
+    <AoCore index="0" sample_clock="oled_clk" trig_type="0" storage_depth="4096" window_num="1" capture_amount="4096" implementation="0" trigger_pos="100" module_name="t80_top" force_trigger_by_falling_edge="false" capture_init_data_enabled="true">
+        <SignalList>
+            <Bus capture_enable="true" name="A[15:0]">
+                <Signal>A[15]</Signal>
+                <Signal>A[14]</Signal>
+                <Signal>A[13]</Signal>
+                <Signal>A[12]</Signal>
+                <Signal>A[11]</Signal>
+                <Signal>A[10]</Signal>
+                <Signal>A[9]</Signal>
+                <Signal>A[8]</Signal>
+                <Signal>A[7]</Signal>
+                <Signal>A[6]</Signal>
+                <Signal>A[5]</Signal>
+                <Signal>A[4]</Signal>
+                <Signal>A[3]</Signal>
+                <Signal>A[2]</Signal>
+                <Signal>A[1]</Signal>
+                <Signal>A[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="D[7:0]">
+                <Signal>D[7]</Signal>
+                <Signal>D[6]</Signal>
+                <Signal>D[5]</Signal>
+                <Signal>D[4]</Signal>
+                <Signal>D[3]</Signal>
+                <Signal>D[2]</Signal>
+                <Signal>D[1]</Signal>
+                <Signal>D[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">RESET_n</Signal>
+            <Signal capture_enable="true">BUSRQ_n</Signal>
+            <Signal capture_enable="true">MREQ_n</Signal>
+            <Signal capture_enable="true">IORQ_n</Signal>
+            <Signal capture_enable="true">RD_n</Signal>
+            <Signal capture_enable="true">WR_n</Signal>
+            <Signal capture_enable="true">RFSH_n</Signal>
+            <Signal capture_enable="true">CLK_n</Signal>
+            <Signal capture_enable="true">INT_n</Signal>
+            <Signal capture_enable="true">NMI_n</Signal>
+            <Signal capture_enable="true">HALT_n</Signal>
+            <Signal capture_enable="true">BUSAK_n</Signal>
+            <Signal capture_enable="true">WAIT_n</Signal>
+            <Signal capture_enable="true">M1_n</Signal>
+            <Bus capture_enable="true" name="z80/u0/PC[15:0]">
+                <Signal>z80/u0/PC[15]</Signal>
+                <Signal>z80/u0/PC[14]</Signal>
+                <Signal>z80/u0/PC[13]</Signal>
+                <Signal>z80/u0/PC[12]</Signal>
+                <Signal>z80/u0/PC[11]</Signal>
+                <Signal>z80/u0/PC[10]</Signal>
+                <Signal>z80/u0/PC[9]</Signal>
+                <Signal>z80/u0/PC[8]</Signal>
+                <Signal>z80/u0/PC[7]</Signal>
+                <Signal>z80/u0/PC[6]</Signal>
+                <Signal>z80/u0/PC[5]</Signal>
+                <Signal>z80/u0/PC[4]</Signal>
+                <Signal>z80/u0/PC[3]</Signal>
+                <Signal>z80/u0/PC[2]</Signal>
+                <Signal>z80/u0/PC[1]</Signal>
+                <Signal>z80/u0/PC[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">z80/u0/IntE_FF1</Signal>
+            <Signal capture_enable="true">z80/u0/IntE_FF2</Signal>
+            <Signal capture_enable="true">z80/NMI_n</Signal>
+            <Signal capture_enable="true">z80/u0/NMI_n</Signal>
+            <Signal capture_enable="true">z80/u0/NMI_s</Signal>
+            <Signal capture_enable="true">z80/u0/NMICycle</Signal>
+            <Signal capture_enable="true">z80/u0/OldNMI_n</Signal>
+            <Signal capture_enable="true">z80/u0/mcode/NMICycle</Signal>
+        </SignalList>
+        <Triggers>
+            <Trigger index="0">
+                <SignalList>
+                    <Signal>RESET_n</Signal>
+                    <Signal>INT_n</Signal>
+                    <Signal>NMI_n</Signal>
+                    <Signal>DBG_out</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="1"/>
+            <Trigger index="2"/>
+            <Trigger index="3"/>
+            <Trigger index="4"/>
+            <Trigger index="5"/>
+            <Trigger index="6"/>
+            <Trigger index="7"/>
+            <Trigger index="8"/>
+            <Trigger index="9"/>
+            <Trigger index="10"/>
+            <Trigger index="11"/>
+            <Trigger index="12"/>
+            <Trigger index="13"/>
+            <Trigger index="14"/>
+            <Trigger index="15"/>
+        </Triggers>
+        <MatchUnits>
+            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="XXXX" value1="0000" trigger="0"/>
+            <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="5" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="6" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="7" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="8" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="9" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="10" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="11" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="12" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="13" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="14" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="15" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+        </MatchUnits>
+        <Expressions type="Static">
+            <Expression>M0</Expression>
+        </Expressions>
+    </AoCore>
+    <GAO_ID>0001001100101100</GAO_ID>
+</GAO_CONFIG>

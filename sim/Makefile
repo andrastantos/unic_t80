@@ -22,6 +22,7 @@ VHDL_SRC =  \
     ../T80_ALU.vhd \
     ../T80_Reg.vhd
 
+PROGRAM = irq_test
 # Run target
 elab: $(VHDL_SRC)
 	-mkdir _out
@@ -53,13 +54,13 @@ _obj/test.bin: _obj/test.ihx
 	-mkdir _obj
 	objcopy --input-target=ihex --output-target=binary $< $@
 
-_obj/test.vhd: _obj/zexall.bin sram_template.vhd
+_obj/test.vhd: _obj/$(PROGRAM).bin sram_template.vhd
 	-mkdir _obj
-	./ram_init.py -i $< -o $@ -t sram_template.vhd -n ROM
+	python ./ram_init.py -i $< -o $@ -t sram_template.vhd -n ROM
 
-_obj/sram_with_init.vhd: _obj/zexall.bin ../SSRAM_template.vhd
+_obj/sram_with_init.vhd: _obj/$(PROGRAM).bin ../SSRAM_template.vhd
 	-mkdir _obj
-	./ram_init.py -i $< -o $@ -t ../SSRAM_template.vhd -n SSRAM_with_init
+	python ./ram_init.py -i $< -o $@ -t ../SSRAM_template.vhd -n SSRAM_with_init
 
 zmac/zmac:
 	make -C zmac zmac
@@ -69,6 +70,15 @@ _obj/zexall.hex: zexall.asm zmac/zmac
 	zmac/zmac $< -o $@ -o $(@:.hex=.lst)
 
 _obj/zexall.bin: _obj/zexall.hex
+	-mkdir _obj
+	objcopy --input-target=ihex --output-target=binary $< $@
+
+
+_obj/irq_test.hex: irq_test.asm zmac/zmac
+	-mkdir _obj
+	zmac/zmac $< -o $@ -o $(@:.hex=.lst)
+
+_obj/irq_test.bin: _obj/irq_test.hex
 	-mkdir _obj
 	objcopy --input-target=ihex --output-target=binary $< $@
 

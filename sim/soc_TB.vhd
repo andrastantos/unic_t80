@@ -11,12 +11,17 @@ architecture behaviour of soc_TB is
 	signal Clk			: std_logic := '0';
     signal rxd          : std_logic := '0';
     signal txd          : std_logic;
+    signal int_n        : std_logic;
+    signal nmi_n        : std_logic;
 begin
 
 	dut : entity work.soc_top
 		port map(
 			Reset_n => Reset_n,
 			Clk27 => Clk,
+
+    		INT_n   => int_n,
+	    	NMI_n   => nmi_n,
 
             M1_n    => open,
             MREQ_n  => open,
@@ -36,6 +41,9 @@ begin
 
 
 	Reset_n <= '0', '1' after 1 us;
+    -- These two are generating an interrupt and an NMI
+    nmi_n <= '1', '0' after 2 us;
+    int_n <= '1', '0' after 4 us;
 
     -- Running off of a 27MHz clock.
 	Clk <= not Clk after 18.5 ns;
