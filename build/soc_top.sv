@@ -102,8 +102,8 @@ module t80_top (
         .rst_divider(rst_divider)
     );
 
-    assign psram_cs_n = 1'b0;
-    assign flash_cs_n = 1'b0;
+    assign psram_cs_n = 1'b1;
+    assign flash_cs_n = 1'b1;
     assign lcd_cs_n = spi_ncs;
     assign spi_mosi_io0 = spi_mosi;
     assign lcd_rst_n = lcd_nrst;
