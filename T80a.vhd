@@ -418,9 +418,27 @@ architecture rtl of T80a_dido is
 	signal TState               : std_logic_vector(2 downto 0);
    signal DBG                  : std_logic;
    signal IntE                 : std_logic;
-
+   signal FDC_access : std_logic;
+   signal FDC_access_d : std_logic;
+   signal counter : std_logic_vector(15 downto 0);
+   signal M1_i : std_logic;
 begin
-   DBG_out <= DBG;
+   --DBG_out <= DBG;
+   FDC_access <= not (not IORQ_n_i and not A_i(7) and M1_i);
+   DBG_out <= FDC_access;
+   M1_n <= M1_i;
+
+	process (RESET_n, CLK_n)
+	begin
+		if RESET_n = '0' then
+			counter <= (others => '0');
+         FDC_access_d <= '1';
+		elsif CLK_n'event and CLK_n = '1' then
+         counter <= std_logic_vector(unsigned(counter) + 1);
+         FDC_access_d <= FDC_access;
+		end if;
+	end process;
+
 
 	CEN <= '1';
 
@@ -457,7 +475,7 @@ begin
       )
 		port map(
 			CEN => CEN,
-			M1_n => M1_n,
+			M1_n => M1_i,
 			IORQ => IORQ,
 			NoRead => NoRead,
 			Write => Write,

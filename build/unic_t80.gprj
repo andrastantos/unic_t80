@@ -15,6 +15,7 @@
         <File path="/home/tantos/unic_stuff/unic_cores/unic_t80/T80a.vhd" type="file.vhdl" enable="1"/>
         <File path="unic_t80.cst" type="file.cst" enable="1"/>
         <File path="unic_t80.sdc" type="file.sdc" enable="1"/>
-        <File path="unic_t80.rao" type="file.gao" enable="1"/>
+        <File path="fdc_log.rao" type="file.gao" enable="1"/>
+        <File path="unic_t80.rao" type="file.gao" enable="0"/>
     </FileList>
 </Project>

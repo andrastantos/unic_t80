@@ -1,0 +1,59 @@
+<?xml version="1" encoding="UTF-8"?>
+<GAO_CONFIG>
+    <Version>3.0</Version>
+    <Mode>Lite</Mode>
+    <AoCore_Lite index="0" sample_clock="z80/FDC_access_d" trig_type="1" capture_amount="128" implemention="0" input_register_enabled="1" capture_init_data_enabled="1" module_name="t80_top">
+        <SignalList>
+            <Bus capture_enable="true" name="z80/counter[15:0]">
+                <Signal>z80/counter[15]</Signal>
+                <Signal>z80/counter[14]</Signal>
+                <Signal>z80/counter[13]</Signal>
+                <Signal>z80/counter[12]</Signal>
+                <Signal>z80/counter[11]</Signal>
+                <Signal>z80/counter[10]</Signal>
+                <Signal>z80/counter[9]</Signal>
+                <Signal>z80/counter[8]</Signal>
+                <Signal>z80/counter[7]</Signal>
+                <Signal>z80/counter[6]</Signal>
+                <Signal>z80/counter[5]</Signal>
+                <Signal>z80/counter[4]</Signal>
+                <Signal>z80/counter[3]</Signal>
+                <Signal>z80/counter[2]</Signal>
+                <Signal>z80/counter[1]</Signal>
+                <Signal>z80/counter[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="z80/u0/PC[15:0]">
+                <Signal>z80/u0/PC[15]</Signal>
+                <Signal>z80/u0/PC[14]</Signal>
+                <Signal>z80/u0/PC[13]</Signal>
+                <Signal>z80/u0/PC[12]</Signal>
+                <Signal>z80/u0/PC[11]</Signal>
+                <Signal>z80/u0/PC[10]</Signal>
+                <Signal>z80/u0/PC[9]</Signal>
+                <Signal>z80/u0/PC[8]</Signal>
+                <Signal>z80/u0/PC[7]</Signal>
+                <Signal>z80/u0/PC[6]</Signal>
+                <Signal>z80/u0/PC[5]</Signal>
+                <Signal>z80/u0/PC[4]</Signal>
+                <Signal>z80/u0/PC[3]</Signal>
+                <Signal>z80/u0/PC[2]</Signal>
+                <Signal>z80/u0/PC[1]</Signal>
+                <Signal>z80/u0/PC[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">RD_n</Signal>
+            <Signal capture_enable="true">WR_n</Signal>
+            <Signal capture_enable="true">A[0]</Signal>
+            <Bus capture_enable="true" name="D[7:0]">
+                <Signal>D[7]</Signal>
+                <Signal>D[6]</Signal>
+                <Signal>D[5]</Signal>
+                <Signal>D[4]</Signal>
+                <Signal>D[3]</Signal>
+                <Signal>D[2]</Signal>
+                <Signal>D[1]</Signal>
+                <Signal>D[0]</Signal>
+            </Bus>
+        </SignalList>
+    </AoCore_Lite>
+    <GAO_ID>1001101100001000</GAO_ID>
+</GAO_CONFIG>

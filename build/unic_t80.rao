@@ -2,7 +2,7 @@
 <GAO_CONFIG>
     <Version>3.0</Version>
     <Mode>Standard</Mode>
-    <AoCore index="0" sample_clock="oled_clk" trig_type="0" storage_depth="4096" window_num="1" capture_amount="4096" implementation="0" trigger_pos="100" module_name="t80_top" force_trigger_by_falling_edge="false" capture_init_data_enabled="true">
+    <AoCore index="0" sample_clock="oled_clk" trig_type="0" storage_depth="4096" window_num="1" capture_amount="4096" implementation="0" trigger_pos="1000" module_name="t80_top" force_trigger_by_falling_edge="false" capture_init_data_enabled="true">
         <SignalList>
             <Bus capture_enable="true" name="A[15:0]">
                 <Signal>A[15]</Signal>
@@ -72,14 +72,14 @@
             <Signal capture_enable="true">z80/u0/NMICycle</Signal>
             <Signal capture_enable="true">z80/u0/OldNMI_n</Signal>
             <Signal capture_enable="true">z80/u0/mcode/NMICycle</Signal>
+            <Signal capture_enable="true">DBG_out</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
-                    <Signal>RESET_n</Signal>
-                    <Signal>INT_n</Signal>
                     <Signal>NMI_n</Signal>
                     <Signal>DBG_out</Signal>
+                    <Signal>INT_n</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="1"/>
@@ -99,7 +99,7 @@
             <Trigger index="15"/>
         </Triggers>
         <MatchUnits>
-            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="XXXX" value1="0000" trigger="0"/>
+            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="X0X" value1="000" trigger="0"/>
             <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
