@@ -1,0 +1,3 @@
+To get GAO work, one must own /etc/modprobe.d/fdio_sio.conf
+
+This is a simple file that black-lists the fdio_sio driver for some reason.
