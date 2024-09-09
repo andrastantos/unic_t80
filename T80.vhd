@@ -405,7 +405,7 @@ begin
 		DI_Reg when Save_ALU_r = '0' else
 		ALU_Q;
 
-	Update_DO <= '1' when (TState /= 2 or Wait_n = '1') and T_Res = '1' else '0';
+	Update_DO <= '1' when (TState /= 2 or (Wait_n = '1' or (NoRead = '1' and MCycle /= "001"))) and T_Res = '1' else '0';
 	Update_DO2 <= '1' when TState = 1 and Auto_Wait_t1 = '0' else '0';
 
 	Update_DO_from_save <= '1' when
@@ -732,7 +732,7 @@ begin
 						F(Flag_P) <= not (ioq(0) xor ioq(1) xor ioq(2) xor ioq(3) xor ioq(4) xor ioq(5) xor ioq(6) xor ioq(7));
 					end if;
 
-					if TState = 2 and Wait_n = '1' then
+					if TState = 2 and (Wait_n = '1' or NoRead = '1') then
 						if ISet = "01" and MCycle = "111" then
 							IR <= DInst;
 						end if;
@@ -760,7 +760,7 @@ begin
 						end if;
 					end if;
 
-					if (TState = 2 and Wait_n = '1') or (TState = 4 and MCycle = "001") then
+					if (TState = 2 and (Wait_n = '1' or NoRead = '1')) or (TState = 4 and MCycle = "001") then
 						if IncDec_16(2 downto 0) = "111" then
 							if IncDec_16(3) = '1' then
 								SP <= SP - 1;
@@ -1068,7 +1068,7 @@ begin
 			RegWEL <= '1';
 		end if;
 
-		if IncDec_16(2) = '1' and ((TState = 2 and Wait_n = '1' and MCycle /= "001") or (TState = 3 and MCycle = "001")) then
+		if IncDec_16(2) = '1' and ((TState = 2 and (Wait_n = '1' or NoRead = '1') and MCycle /= "001") or (TState = 3 and MCycle = "001")) then
 			case IncDec_16(1 downto 0) is
 			when "00" | "01" | "10" =>
 				RegWEH <= '1';
@@ -1317,7 +1317,7 @@ begin
 					if BusReq_s = '1' and BusAck = '1' then
 					else
 						BusAck <= '0';
-						if TState = 2 and Wait_n = '0' and NoRead = '0' then
+						if TState = 2 and Wait_n = '0' and (NoRead = '0' or MCycle = "001") then
 						elsif T_Res = '1' then
 							if Halt = '1' and  ( not(Mode = 3 and INT_n = '0' and IntE_FF1 = '0')) then  -- halt bug when Mode = 3 , INT_n = '0' and IME=0
 								Halt_FF <= '1';
