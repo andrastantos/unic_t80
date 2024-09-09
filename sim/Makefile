@@ -2,6 +2,8 @@ GHDL=ghdl
 GHDLFLAGS= -fsynopsys -fexplicit --std=08 -O2
 GHDLRUNFLAGS=
 
+PROGRAM = irq_test
+
 # Default target : elaborate
 all: run
 
@@ -22,7 +24,6 @@ VHDL_SRC =  \
     ../T80_ALU.vhd \
     ../T80_Reg.vhd
 
-PROGRAM = irq_test
 # Run target
 elab: $(VHDL_SRC)
 	-mkdir _out
@@ -46,14 +47,6 @@ sim_soc: elab
 
 force:
 
-_obj/test.ihx: test.c
-	-mkdir _obj
-	sdcc -mz80 $^ -o $@
-
-_obj/test.bin: _obj/test.ihx
-	-mkdir _obj
-	objcopy --input-target=ihex --output-target=binary $< $@
-
 _obj/test.vhd: _obj/$(PROGRAM).bin sram_template.vhd
 	-mkdir _obj
 	python ./ram_init.py -i $< -o $@ -t sram_template.vhd -n ROM
@@ -65,20 +58,34 @@ _obj/sram_with_init.vhd: _obj/$(PROGRAM).bin ../SSRAM_template.vhd
 zmac/zmac:
 	make -C zmac zmac
 
-_obj/zexall.hex: zexall.asm zmac/zmac
+#_obj/zexall.hex: zexall.asm zmac/zmac
+#	-mkdir _obj
+#	zmac/zmac $< -o $@ -o $(@:.hex=.lst)
+#
+#_obj/zexall.bin: _obj/zexall.hex
+#	-mkdir _obj
+#	objcopy --input-target=ihex --output-target=binary $< $@
+#
+#
+#_obj/irq_test.hex: irq_test.asm zmac/zmac
+#	-mkdir _obj
+#	zmac/zmac $< -o $@ -o $(@:.hex=.lst)
+#
+#_obj/irq_test.bin: _obj/irq_test.hex
+#	-mkdir _obj
+#	objcopy --input-target=ihex --output-target=binary $< $@
+#
+#
+
+
+_obj/%.hex: %.asm zmac/zmac
 	-mkdir _obj
 	zmac/zmac $< -o $@ -o $(@:.hex=.lst)
 
-_obj/zexall.bin: _obj/zexall.hex
+_obj/%.hex: %.c
+	-mkdir _obj
+	sdcc -mz80 $^ -o $@
+
+_obj/%.bin: _obj/%.hex
 	-mkdir _obj
 	objcopy --input-target=ihex --output-target=binary $< $@
-
-
-_obj/irq_test.hex: irq_test.asm zmac/zmac
-	-mkdir _obj
-	zmac/zmac $< -o $@ -o $(@:.hex=.lst)
-
-_obj/irq_test.bin: _obj/irq_test.hex
-	-mkdir _obj
-	objcopy --input-target=ihex --output-target=binary $< $@
-

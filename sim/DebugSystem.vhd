@@ -29,39 +29,40 @@ end DebugSystem;
 architecture struct of DebugSystem is
 
     signal M1_n            : std_logic;
-    signal MREQ_n        : std_logic;
-    signal IORQ_n        : std_logic;
+    signal MREQ_n          : std_logic;
+    signal IORQ_n          : std_logic;
     signal RD_n            : std_logic;
     signal WR_n            : std_logic;
-    signal RFSH_n        : std_logic;
-    signal HALT_n        : std_logic;
-    signal WAIT_n        : std_logic;
-    signal RESET_s        : std_logic;
-    signal BUSRQ_n        : std_logic;
-    signal BUSAK_n        : std_logic;
-    signal A            : std_logic_vector(15 downto 0);
-    signal D            : std_logic_vector(7 downto 0);
-    signal ROM_D        : std_logic_vector(7 downto 0);
-    signal SRAM_D        : std_logic_vector(7 downto 0);
-    signal UART0_D        : std_logic_vector(7 downto 0);
-    signal CPU_D        : std_logic_vector(7 downto 0);
+    signal RFSH_n          : std_logic;
+    signal HALT_n          : std_logic;
+    signal WAIT_n          : std_logic;
+    signal RESET_s         : std_logic;
+    signal BUSRQ_n         : std_logic;
+    signal BUSAK_n         : std_logic;
+    signal A               : std_logic_vector(15 downto 0);
+    signal D               : std_logic_vector(7 downto 0);
+    signal ROM_D           : std_logic_vector(7 downto 0);
+    signal SRAM_D          : std_logic_vector(7 downto 0);
+    signal UART0_D         : std_logic_vector(7 downto 0);
+    signal CPU_D           : std_logic_vector(7 downto 0);
 
-    signal Mirror        : std_logic;
+    signal Mirror          : std_logic;
 
-    signal IOWR_n        : std_logic;
-    signal RAMCS_n        : std_logic;
-    signal ROMCS_n        : std_logic;
-    signal UART0CS_n    : std_logic;
+    signal IOWR_n          : std_logic;
+    signal RAMCS_n         : std_logic;
+    signal ROMCS_n         : std_logic;
+    signal UART0CS_n       : std_logic;
+    signal TERMINATE_n     : std_logic;
 
     signal BaudOut0        : std_logic;
 
-    file sim_log            : text open write_mode is "sim.log";
+    file sim_log           : text open write_mode is "sim.log";
 
-    signal wait_cnt : unsigned(7 downto 0);
+    signal wait_cnt        : unsigned(7 downto 0);
 
 begin
 
-    --Wait_n <= '1';
+    Wait_n <= '1';
     BusRq_n <= '1';
 
     -- Wait timer
@@ -86,20 +87,20 @@ begin
     --end process;
 
     -- This version creates a 25% duty-cycle free-running counter
-    process (Reset_n, Clk)
-    begin
-        if Reset_n = '0' then
-            wait_cnt <= (others => '0');
-        elsif Clk'event and Clk = '1' then
-            wait_cnt <= wait_cnt + 1;
-            if wait_cnt = 3 then
-                wait_cnt <= (others => '0');
-                WAIT_n <= '1';
-            else
-                WAIT_n <= '0';
-            end if;
-        end if;
-    end process;
+    --process (Reset_n, Clk)
+    --begin
+    --    if Reset_n = '0' then
+    --        wait_cnt <= (others => '0');
+    --    elsif Clk'event and Clk = '1' then
+    --        wait_cnt <= wait_cnt + 1;
+    --        if wait_cnt = 3 then
+    --            wait_cnt <= (others => '0');
+    --            WAIT_n <= '1';
+    --        else
+    --            WAIT_n <= '0';
+    --        end if;
+    --    end if;
+    --end process;
 
 
     process (Reset_n, Clk)
@@ -121,10 +122,21 @@ begin
         end if;
     end process;
 
-    IOWR_n    <= WR_n or IORQ_n;
-    RAMCS_n   <= '0' when Mirror /= A(15) and MREQ_n = '0' else '1'; -- RAM is from 0x8000 if Mirror is '0', 0x0000 otherwise
-    ROMCS_n   <= '0' when Mirror  = A(15) and MREQ_n = '0' else '1'; -- ROM is from 0x0000 if Mirror is '0', 0x8000 otherwise
-    UART0CS_n <= '0' when IORQ_n = '0' and A(7 downto 3) = "00000" else '1'; -- 0x00 - 0x07
+    IOWR_n      <= WR_n or IORQ_n;
+    RAMCS_n     <= '0' when Mirror /= A(15) and MREQ_n = '0' else '1'; -- RAM is from 0x8000 if Mirror is '0', 0x0000 otherwise
+    ROMCS_n     <= '0' when Mirror  = A(15) and MREQ_n = '0' else '1'; -- ROM is from 0x0000 if Mirror is '0', 0x8000 otherwise
+    UART0CS_n   <= '0' when IORQ_n = '0' and A(7 downto 3) = "00000" else '1'; -- 0x00 - 0x07
+    TERMINATE_n <= '0' when IORQ_n = '0' and A(7 downto 0) = "10011010" and WR_n = '0' else '1'; -- magic I/O address 0x9a is to terminate simulation when written to
+
+    process (CLK)
+    begin
+        if CLK'event and CLK = '0' then
+            if TERMINATE_n = '0' then
+                report "Terminating simulation at the request of the code" severity warning;
+                stop;
+            end if;
+        end if;
+    end process;
 
     process (CLK)
         variable log_row          : line;
