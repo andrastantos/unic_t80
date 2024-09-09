@@ -62,9 +62,9 @@ architecture struct of DebugSystem is
 
 begin
 
-    Wait_n <= '1';
     BusRq_n <= '1';
 
+    -- Wait_n <= '1';
     -- Wait timer
     -- This version adds 5 wait-states to every cycle
     --process (Reset_n, Clk)
@@ -87,20 +87,20 @@ begin
     --end process;
 
     -- This version creates a 25% duty-cycle free-running counter
-    --process (Reset_n, Clk)
-    --begin
-    --    if Reset_n = '0' then
-    --        wait_cnt <= (others => '0');
-    --    elsif Clk'event and Clk = '1' then
-    --        wait_cnt <= wait_cnt + 1;
-    --        if wait_cnt = 3 then
-    --            wait_cnt <= (others => '0');
-    --            WAIT_n <= '1';
-    --        else
-    --            WAIT_n <= '0';
-    --        end if;
-    --    end if;
-    --end process;
+    process (Reset_n, Clk)
+    begin
+        if Reset_n = '0' then
+            wait_cnt <= (others => '0');
+        elsif Clk'event and Clk = '1' then
+            wait_cnt <= wait_cnt + 1;
+            if wait_cnt = 3 then
+                wait_cnt <= (others => '0');
+                WAIT_n <= '1';
+            else
+                WAIT_n <= '0';
+            end if;
+        end if;
+    end process;
 
 
     process (Reset_n, Clk)
@@ -158,7 +158,7 @@ begin
     D <= CPU_D when RD_n = '0' else "ZZZZZZZZ";
 
     z80 : entity work.T80a
-            generic map(Mode => 1, IOWait => 1, R800_mode => 0)
+            generic map(Mode => 0, IOWait => 1, R800_mode => 0)
             port map(
                 RESET_n => RESET_s,
                 CLK_n => Clk,
