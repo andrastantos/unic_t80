@@ -450,11 +450,11 @@ begin
 	RD_n_i <= not (RD and (MREQ_rw or IORQ_rw));                         -- changed RD/IORQ generation
 	WR_n_i <= not (Write and ((WR_t2 and MREQ_rw) or IORQ_rw));          -- added WR/IORQ timing control
 
-	MREQ_n <= MREQ_n_i when BUSAK_n_i = '1' else 'Z';
-	IORQ_n <= IORQ_n_i when BUSAK_n_i = '1' else 'Z';
-	RD_n <= RD_n_i when BUSAK_n_i = '1' else 'Z';
-	WR_n <= WR_n_i when BUSAK_n_i = '1' else 'Z';
-	RFSH_n <= RFSH_n_i when BUSAK_n_i = '1' else 'Z';
+	MREQ_n <= MREQ_n_i;
+	IORQ_n <= IORQ_n_i;
+	RD_n <= RD_n_i;
+	WR_n <= WR_n_i;
+	RFSH_n <= RFSH_n_i;
 	A <= A_i when BUSAK_n_i = '1' else (others => 'Z');
 	DO_EN_n <= '0' when Write = '1' and Write_half_delayed = '1' and BUSAK_n_i = '1' else '1';
 

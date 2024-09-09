@@ -37,6 +37,13 @@ module t80_top (
     logic [7:0] CPU_DI;
     logic [7:0] CPU_DO;
     logic DO_EN_n;
+    logic MREQ_n_i;
+    logic IORQ_n_i;
+    logic RD_n_i;
+    logic WR_n_i;
+    logic RFSH_n_i;
+    logic BUSAK_n_i;
+    logic [15:0] A_i;
 
     //assign GND = 1'b0;
     assign GND = 1'bz;
@@ -109,7 +116,13 @@ module t80_top (
     assign lcd_rst_n = lcd_nrst;
 
     assign CPU_DI = D;
-    assign D = ~DO_EN_n ? CPU_DO : 8'bZ;
+    assign D      = ~DO_EN_n ? CPU_DO : 8'bZ;
+	assign MREQ_n = BUSAK_n_i ? MREQ_n_i : 1'bZ;
+	assign IORQ_n = BUSAK_n_i ? IORQ_n_i : 1'bZ;
+	assign RD_n   = BUSAK_n_i ? RD_n_i : 1'bZ;
+	assign WR_n   = BUSAK_n_i ? WR_n_i : 1'bZ;
+	assign RFSH_n = BUSAK_n_i ? RFSH_n_i : 1'bZ;
+	assign A      = BUSAK_n_i ? A_i : 16'bZ;
 
 
 
@@ -118,25 +131,25 @@ module t80_top (
         .IOWait(1),
         .R800_mode(0)
     ) z80 (
-        .RESET_n (RESET_n ),
-        .CLK_n   (CLK_n   ),
-        .WAIT_n  (WAIT_n  ),
-        .INT_n   (INT_n   ),
-        .NMI_n   (NMI_n   ),
-        .BUSRQ_n (BUSRQ_n ),
-        .M1_n    (M1_n    ),
-        .MREQ_n  (MREQ_n  ),
-        .IORQ_n  (IORQ_n  ),
-        .RD_n    (RD_n    ),
-        .WR_n    (WR_n    ),
-        .RFSH_n  (RFSH_n  ),
-        .HALT_n  (HALT_n  ),
-        .BUSAK_n (BUSAK_n ),
-        .A       (A       ),
-        .DI      (CPU_DI  ),
-        .DO      (CPU_DO  ),
-        .DO_EN_n (DO_EN_n ),
-        .DBG_out (DBG_out )
+        .RESET_n (RESET_n   ),
+        .CLK_n   (CLK_n     ),
+        .WAIT_n  (WAIT_n    ),
+        .INT_n   (INT_n     ),
+        .NMI_n   (NMI_n     ),
+        .BUSRQ_n (BUSRQ_n   ),
+        .M1_n    (M1_n      ),
+        .MREQ_n  (MREQ_n_i  ),
+        .IORQ_n  (IORQ_n_i  ),
+        .RD_n    (RD_n_i    ),
+        .WR_n    (WR_n_i    ),
+        .RFSH_n  (RFSH_n_i  ),
+        .HALT_n  (HALT_n    ),
+        .BUSAK_n (BUSAK_n_i ),
+        .A       (A_i       ),
+        .DI      (CPU_DI    ),
+        .DO      (CPU_DO    ),
+        .DO_EN_n (DO_EN_n   ),
+        .DBG_out (DBG_out   )
     );
 
     // We create a signal that fires when we get an IRQ while an NMI is in progress
