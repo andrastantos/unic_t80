@@ -1,5 +1,7 @@
 #create_project -name TTT -pn GW1NR-LV9QN88C6/I5 -device_version C
-set_device GW1NR-LV9QN88C6/I5 -device_version C
+#set_device GW1NR-LV9QN88C6/I5 -device_version C
+set_device -h
+set_device GW1NR-LV9QN88C6/I5 -name GW1NR-9C
 
 add_file ../T80.vhd
 add_file ../T80_ALU.vhd

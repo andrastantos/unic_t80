@@ -18,5 +18,6 @@ with BitBangDevice(device_id="FT232R USB UART") as bb:
     bb.direction = 0b0000_0001 # Set TXD to output, all others to input
     bb.port = 0
     sleep(0.3)
+    input("Press Enter to continue...")
     bb.port = 1
     sleep(0.1)
