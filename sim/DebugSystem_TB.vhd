@@ -25,8 +25,8 @@ begin
 
 	Reset_n <= '0', '1' after 1 us;
 
-	NMI_n <= '1', '0' after 2000 ns;
-	INT_n <= '1', '0' after 2500 ns;
+	-- NMI_n <= '1', '0' after 2000 ns;
+	-- INT_n <= '1', '0' after 2500 ns;
 
 	Clk <= not Clk after 5 ns;
 

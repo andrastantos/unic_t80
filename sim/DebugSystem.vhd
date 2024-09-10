@@ -53,6 +53,7 @@ architecture struct of DebugSystem is
     signal ROMCS_n         : std_logic;
     signal UART0CS_n       : std_logic;
     signal TERMINATE_n     : std_logic;
+    signal FATAL_n         : std_logic;
 
     signal BaudOut0        : std_logic;
 
@@ -127,12 +128,17 @@ begin
     ROMCS_n     <= '0' when Mirror  = A(15) and MREQ_n = '0' else '1'; -- ROM is from 0x0000 if Mirror is '0', 0x8000 otherwise
     UART0CS_n   <= '0' when IORQ_n = '0' and A(7 downto 3) = "00000" else '1'; -- 0x00 - 0x07
     TERMINATE_n <= '0' when IORQ_n = '0' and A(7 downto 0) = "10011010" and WR_n = '0' else '1'; -- magic I/O address 0x9a is to terminate simulation when written to
+    FATAL_n     <= '0' when IORQ_n = '0' and A(7 downto 0) = "10011011" and WR_n = '0' else '1'; -- magic I/O address 0x9b is to fatally terminate simulation when written to
 
     process (CLK)
     begin
         if CLK'event and CLK = '0' then
             if TERMINATE_n = '0' then
                 report "Terminating simulation at the request of the code" severity warning;
+                stop;
+            end if;
+            if FATAL_n = '0' then
+                report "FATAL ERROR in simulation at the request of the code" severity error;
                 stop;
             end if;
         end if;

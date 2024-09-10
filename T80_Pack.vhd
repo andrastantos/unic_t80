@@ -110,7 +110,7 @@ package T80_Pack is
 		REG             : out std_logic_vector(211 downto 0); -- IFF2, IFF1, IM, IY, HL', DE', BC', IX, HL, DE, BC, PC, SP, R, I, F', A', F, A
 		DIRSet          : in  std_logic := '0';
 		DIR             : in  std_logic_vector(211 downto 0) := (others => '0'); -- IFF2, IFF1, IM, IY, HL', DE', BC', IX, HL, DE, BC, PC, SP, R, I, F', A', F, A
-	
+
 		-- debug signals
 		DBG             : out std_logic
 	);
@@ -189,6 +189,7 @@ package T80_Pack is
 		LDHLSP                  : out std_logic;
 		ADDSPdd                 : out std_logic;
 		Special_LD              : out std_logic_vector(2 downto 0); -- A,I;A,R;I,A;R,A;None
+		ExchangeSPHL            : out std_logic;
 		ExchangeDH              : out std_logic;
 		ExchangeRp              : out std_logic;
 		ExchangeAF              : out std_logic;

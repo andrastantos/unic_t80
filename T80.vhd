@@ -240,6 +240,7 @@ architecture rtl of T80 is
 	signal ADDSPdd              : std_logic;
 	signal IORQ_i               : std_logic;
 	signal Special_LD           : std_logic_vector(2 downto 0);
+	signal ExchangeSPHL         : std_logic;
 	signal ExchangeDH           : std_logic;
 	signal ExchangeRp           : std_logic;
 	signal ExchangeAF           : std_logic;
@@ -331,6 +332,7 @@ begin
 			LDHLSP      => LDHLSP,
 			ADDSPdd     => ADDSPdd,
 			Special_LD  => Special_LD,
+			ExchangeSPHL=> ExchangeSPHL,
 			ExchangeDH  => ExchangeDH,
 			ExchangeRp  => ExchangeRp,
 			ExchangeAF  => ExchangeAF,
@@ -1026,6 +1028,8 @@ begin
 			Alternate & "01" when (ExchangeDH = '1' or I_MULU = '1') and TState = 4 else
 			-- LDHLSP
 			"010" when LDHLSP = '1' and TState = 4 else
+			-- EX (SP),HL
+			Alternate & "10" when ExchangeSPHL = '1' and TState = 4 else
 			-- Bus A / Write
 			RegAddrA_r;
 
@@ -1039,7 +1043,7 @@ begin
 			signed(RegBusA) + 1;
 
 	process (Save_ALU_r, Auto_Wait_t1, ALU_OP_r, Read_To_Reg_r, I_MULU, T_Res,
-			ExchangeDH, IncDec_16, MCycle, TState, Wait_n, LDHLSP)
+			ExchangeDH, ExchangeSPHL, IncDec_16, MCycle, TState, Wait_n, LDHLSP)
 	begin
 		RegWEH <= '0';
 		RegWEL <= '0';
@@ -1068,6 +1072,11 @@ begin
 			RegWEL <= '1';
 		end if;
 
+		if ExchangeSPHL = '1' and TState = 4 then
+			RegWEH <= '1';
+			RegWEL <= '1';
+		end if;
+
 		if IncDec_16(2) = '1' and ((TState = 2 and (Wait_n = '1' or NoRead = '1') and MCycle /= "001") or (TState = 3 and MCycle = "001")) then
 			case IncDec_16(1 downto 0) is
 			when "00" | "01" | "10" =>
@@ -1081,7 +1090,7 @@ begin
 	TmpAddr2 <= std_logic_vector(unsigned(signed(SP) + signed(Save_Mux)));
 
 	process (Save_Mux, RegBusB, RegBusA_r, ID16, I_MULU, MULU_Prod32, MULU_tmp, T_Res,
-			ExchangeDH, IncDec_16, MCycle, TState, Wait_n, LDHLSP, TmpAddr2)
+			ExchangeDH, ExchangeSPHL, IncDec_16, MCycle, TState, Wait_n, LDHLSP, TmpAddr2)
 	begin
 		RegDIH <= Save_Mux;
 		RegDIL <= Save_Mux;
@@ -1108,6 +1117,10 @@ begin
 		if ExchangeDH = '1' and TState = 4 then
 			RegDIH <= RegBusA_r(15 downto 8);
 			RegDIL <= RegBusA_r(7 downto 0);
+		end if;
+		if ExchangeSPHL = '1' and TState = 4 then
+			RegDIH <= WZ(15 downto 8);
+			RegDIL <= WZ(7 downto 0);
 		end if;
 
 		if IncDec_16(2) = '1' and ((TState = 2 and MCycle /= "001") or (TState = 3 and MCycle = "001")) then

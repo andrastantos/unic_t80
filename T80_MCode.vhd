@@ -127,6 +127,7 @@ entity T80_MCode is
       LDHLSP      : out std_logic;
       ADDSPdd     : out std_logic;
       Special_LD  : out std_logic_vector(2 downto 0); -- A,I;A,R;I,A;R,A;None
+	  ExchangeSPHL: out std_logic;
       ExchangeDH  : out std_logic;
       ExchangeRp  : out std_logic;
       ExchangeAF  : out std_logic;
@@ -234,6 +235,7 @@ begin
 		LDHLSP <= '0';
 		ADDSPdd <= '0';
 		Special_LD <= "000";
+		ExchangeSPHL <= '0';
 		ExchangeDH <= '0';
 		ExchangeRp <= '0';
 		ExchangeAF <= '0';
@@ -689,23 +691,26 @@ begin
 				when 1 =>
 					Set_Addr_To <= aSP;
 				when 2 =>
-					Read_To_Reg <= '1';
+					IncDec_16 <= "0111";
 					Set_BusA_To <= "0101";
-					Set_BusB_To <= "0101";
 					Set_Addr_To <= aSP;
+					TStates <= "011";
 					LDZ <= '1';
 				when 3 =>
-					IncDec_16 <= "0111";
+					IncDec_16 <= "1111";
+					Set_BusA_To <= "0100";
+					Set_BusB_To <= "0101";
 					Set_Addr_To <= aSP;
 					TStates <= "100";
-					Write <= '1';
-				when 4 =>
-					Read_To_Reg <= '1';
-					Set_BusA_To <= "0100";
-					Set_BusB_To <= "0100";
-					Set_Addr_To <= aSP;
 					LDW <= '1';
+				when 4 =>
+					IncDec_16 <= "0111";
+					Set_Addr_To <= aSP;
+					Set_BusB_To <= "0100";
+					TStates <= "011";
+					Write <= '1';
 				when 5 =>
+					ExchangeSPHL <= '1';
 					IncDec_16 <= "1111";
 					TStates <= "101";
 					Write <= '1';
