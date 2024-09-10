@@ -2,7 +2,7 @@ GHDL=ghdl
 GHDLFLAGS= -fsynopsys -fexplicit --std=08 -O2
 GHDLRUNFLAGS=
 
-PROGRAM = cbranch_timing_test
+PROGRAM = write_timing_test
 
 # Default target : elaborate
 all: run
