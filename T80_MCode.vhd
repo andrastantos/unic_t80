@@ -797,7 +797,9 @@ begin
 				ALU_Op <= "0000";
 				Set_BusB_To <= "1010";
 				Set_BusA_To(2 downto 0) <= DDD;
+				Early_T_Res <= '1';
 			when 3 =>
+				Early_T_Res <= '1';
 				Write <= '1';
 			when others => null;
 			end case;
@@ -824,7 +826,9 @@ begin
 				PreserveC <= '1';
 				Set_BusB_To <= "1010";
 				Set_BusA_To(2 downto 0) <= DDD;
+				Early_T_Res <= '1';
 			when 3 =>
+				Early_T_Res <= '1';
 				Write <= '1';
 			when others => null;
 			end case;
