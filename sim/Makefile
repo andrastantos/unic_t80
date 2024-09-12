@@ -2,7 +2,7 @@ GHDL=ghdl
 GHDLFLAGS= -fsynopsys -fexplicit --std=08 -O2
 GHDLRUNFLAGS=
 
-PROGRAM = write_timing_test
+PROGRAM = ldi_flags_test
 
 # Default target : elaborate
 all: run
