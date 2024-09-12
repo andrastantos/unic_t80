@@ -12,7 +12,7 @@ add_file ../T80a.vhd
 add_file shadow_tracer.sv
 add_file shadow_tracer.cst
 add_file shadow_tracer.sdc
-#add_file shadow_tracer.rao
+add_file shadow_tracer.rao
 
 set_option -verilog_std sysv2017
 set_option -gen_text_timing_rpt 1

@@ -11,7 +11,7 @@ add_file oled_ctrl.sv
 add_file soc_top.sv
 add_file unic_t80.cst
 add_file unic_t80.sdc
-add_file unic_t80.rao
+#add_file unic_t80.rao
 
 set_option -verilog_std sysv2017
 set_option -gen_text_timing_rpt 1

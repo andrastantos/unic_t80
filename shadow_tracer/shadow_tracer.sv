@@ -72,7 +72,7 @@ module shadow_tracer_top (
     );
 
     //defparam osc_inst.FREQ_DIV = 10; // Sets clk to about 21MHz
-    defparam osc_inst.FREQ_DIV = 20; // Sets clk to about 10MHz
+    defparam osc_inst.FREQ_DIV = 4; // Sets clk to about 50MHz
     defparam osc_inst.DEVICE = "GW1NR-9C";
 
     assign lcd_rst_n = 1'b0;
@@ -141,11 +141,11 @@ module shadow_tracer_top (
     assign data_match = (CPU_DO == D) | DO_EN_n | (MREQ_n_i && IORQ_n_i);
     assign addr_match = A_i == A;
     always @(posedge CLK_n) begin
-        rise_match <= ~RESET_n | ctrl_match; //& data_match & addr_match;
+        rise_match <= ~RESET_n | ctrl_match & data_match; // & addr_match;
     end;
 
     always @(negedge CLK_n) begin
-        fall_match <= ~RESET_n | ctrl_match; //& data_match & addr_match;
+        fall_match <= ~RESET_n | ctrl_match & data_match; // & addr_match;
     end;
 
     logic match;
@@ -157,11 +157,12 @@ module shadow_tracer_top (
     assign io2b = RD_n_i;
     assign io3a = WR_n_i;
     assign io3b = RFSH_n_i;
-    assign io4a = data_match;
+    //assign io4a = data_match;
+    assign io4a = ctrl_match;
     //assign io4b = addr_match;
     assign io4b = CLK_n;
 
-    assign io5a = ctrl_match;
+    assign io5a = match;
     assign io5b = DO_EN_n;
     //assign io6a = 1'b0;
     //assign io6b = 1'b0;

@@ -103,7 +103,33 @@ IO_PORT "spi_clk"          IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.
 
 // Connect serial port to JTAG connector pint
 IO_LOC  "TXD"              34;
-IO_PORT "TXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
-// IO_LOC  "RXD"              33;
-// IO_PORT "RXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_PORT "TXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "RXD"              33;
+IO_PORT "RXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// Pins only available on the FPC connector (except for 6a/6b which is also the TXD/RXD pair for serial)
+IO_LOC  "io1a"             37;
+IO_PORT "io1a"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io1b"             38;
+IO_PORT "io1b"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io2a"             36;
+IO_PORT "io2a"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io2b"             35;
+IO_PORT "io2b"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io3a"             39;
+IO_PORT "io3a"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io3b"             40;
+IO_PORT "io3b"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io4a"             31;
+IO_PORT "io4a"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io4b"             32;
+IO_PORT "io4b"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io5a"             41;
+IO_PORT "io5a"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+IO_LOC  "io5b"             42;
+IO_PORT "io5b"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+//IO_LOC  "io6a"             33;
+//IO_PORT "io6a"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
+//IO_LOC  "io6b"             34;
+//IO_PORT "io6b"             IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.3;
 

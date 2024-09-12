@@ -32,7 +32,19 @@ module t80_top (
 
     output logic GND,
 
-    output logic TXD
+    output logic io1a,
+    output logic io1b,
+    output logic io2a,
+    output logic io2b,
+    output logic io3a,
+    output logic io3b,
+    output logic io4a,
+    output logic io4b,
+    output logic io5a,
+    output logic io5b,
+
+    output logic TXD,
+    input logic RXD
 );
     logic [7:0] CPU_DI;
     logic [7:0] CPU_DO;
@@ -44,6 +56,7 @@ module t80_top (
     logic RFSH_n_i;
     logic BUSAK_n_i;
     logic [15:0] A_i;
+    logic DBG_out;
 
     //assign GND = 1'b0;
     assign GND = 1'bz;
@@ -55,65 +68,16 @@ module t80_top (
     );
 
     //defparam osc_inst.FREQ_DIV = 10; // Sets clk to about 21MHz
-    defparam osc_inst.FREQ_DIV = 20; // Sets clk to about 21MHz
+    defparam osc_inst.FREQ_DIV = 4; // Sets clk to about 50MHz
     defparam osc_inst.DEVICE = "GW1NR-9C";
 
 
-    logic busy;
-    logic spi_ncs;
-    logic spi_mosi;
-    logic [7:0] clk_divider;
-    logic [7:0] rst_divider;
-
-    logic [31:0] refresh_divider;
-    logic refresh;
-    logic lcd_nrst;
-    logic DBG_out;
-
-    always @(posedge oled_clk) begin
-        if (refresh_divider == 10000000) begin
-            refresh = 1'b1;
-            refresh_divider = 0;
-        end else begin
-            refresh = 1'b0;
-            refresh_divider = refresh_divider + 1'b1;
-        end
-    end
-
-    /*
-    assign refresh = refresh_divider[15:0] == 'hffff;
-    always @(posedge oled_clk) begin
-        if (refresh_divider != 'h3ffff) begin
-            refresh_divider = refresh_divider + 1'b1;
-        end
-    end
-    */
-
-    //assign refresh = 1'b0;
-
-
-    assign clk_divider = 20; // Roughly 1MHz SPI clk
-    assign rst_divider = 100; // Roughly 5us of reset pulse
-
-    OledCtrl oled_ctrl (
-        .clk(oled_clk),
-        .rst(1'b0),
-        .reset(1'b0),
-        .refresh(refresh),
-        .busy(busy),
-        .spi_clk(spi_clk),
-        .spi_mosi(spi_mosi),
-        .spi_ncs(spi_ncs),
-        .lcd_nrst(lcd_nrst),
-        .clk_divider(clk_divider),
-        .rst_divider(rst_divider)
-    );
-
+    assign lcd_rst_n = 1'b0;
+    assign lcd_cs_n = 1'b1;
     assign psram_cs_n = 1'b1;
     assign flash_cs_n = 1'b1;
-    assign lcd_cs_n = spi_ncs;
-    assign spi_mosi_io0 = spi_mosi;
-    assign lcd_rst_n = lcd_nrst;
+    assign spi_mosi_io0 = 1'b1;
+    assign spi_clk = 1'b1;
 
     assign CPU_DI = D;
     assign D      = ~DO_EN_n ? CPU_DO : 8'bZ;
@@ -123,7 +87,7 @@ module t80_top (
 	assign WR_n   = BUSAK_n_i ? WR_n_i : 1'bZ;
 	assign RFSH_n = BUSAK_n_i ? RFSH_n_i : 1'bZ;
 	assign A      = BUSAK_n_i ? A_i : 16'bZ;
-
+    assign BUSAK_n = BUSAK_n_i;
 
 
     T80a_dido #(
@@ -152,28 +116,18 @@ module t80_top (
         .DBG_out (DBG_out   )
     );
 
-    // We create a signal that fires when we get an IRQ while an NMI is in progress
-    logic prev_int_n;
-    logic int_edge;
-    logic int_while_nmi;
 
-    always @(posedge CLK_n) prev_int_n <= INT_n;
-    always @(posedge CLK_n) int_edge <= prev_int_n & ~INT_n;
-    assign int_while_nmi = ~NMI_n & int_edge;
-    assign TXD = DBG_out;
-
-    // Analyzer helpers
-    // NOTE: mem and I/O cycles end on a falling edge, while M1 cycles end on a rising one. Lovely!
-    logic mem_rd;
-    logic mem_wr;
-    logic io_rd;
-    logic io_wr;
-
-    assign mem_rd = MREQ_n | RD_n;
-    assign mem_wr = MREQ_n | WR_n;
-    assign io_rd = IORQ_n | RD_n;
-    assign io_wr = IORQ_n | WR_n;
-
+    assign io1a = 1'bz;
+    assign io1b = 1'bz;
+    assign io2a = 1'bz;
+    assign io2b = 1'bz;
+    assign io3a = 1'bz;
+    assign io3b = 1'bz;
+    assign io4a = 1'bz;
+    assign io4b = 1'bz;
+    assign io5a = 1'bz;
+    assign io5b = 1'bz;
+    assign TXD = 1'bz;
 
 endmodule
 
