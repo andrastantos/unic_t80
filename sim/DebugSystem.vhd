@@ -20,9 +20,7 @@ use ieee.numeric_std.all;
 entity DebugSystem is
     port(
         Reset_n        : in std_logic;
-        Clk            : in std_logic;
-        NMI_n          : in std_logic;
-        INT_n          : in std_logic
+        Clk            : in std_logic
     );
 end DebugSystem;
 
@@ -53,13 +51,23 @@ architecture struct of DebugSystem is
     signal ROMCS_n         : std_logic;
     signal UART0CS_n       : std_logic;
     signal TERMINATE_n     : std_logic;
-    signal FATAL_n         : std_logic;
+    signal MARKER_n        : std_logic;
+    signal SCHED_INT_n     : std_logic;
+    signal STAT_CS_n       : std_logic;
+    signal STAT_REG        : std_logic_vector(7 downto 0);
+    signal MIRROR_CS_n     : std_logic;
 
     signal BaudOut0        : std_logic;
 
     file sim_log           : text open write_mode is "sim.log";
 
     signal wait_cnt        : unsigned(7 downto 0);
+    signal NMI_n           : std_logic;
+    signal INT_n           : std_logic;
+    signal int_counter     : unsigned(7 downto 0);
+    signal nmi_counter     : unsigned(7 downto 0);
+    signal int_active      : std_logic;
+    signal nmi_active      : std_logic;
 
 begin
 
@@ -103,6 +111,54 @@ begin
         end if;
     end process;
 
+    process (Reset_n, Clk)
+    begin
+        if Reset_n = '0' then
+            nmi_active <= '0';
+            int_active <= '0';
+            nmi_counter <= (others => '0');
+            int_counter <= (others => '0');
+            NMI_n <= '1';
+            INT_n <= '1';
+        elsif Clk'event and Clk = '1' then
+            if int_active = '1' then
+                if int_counter > 0 then
+                    int_counter <= int_counter - 1;
+                    --INT_n <= '1';
+                else
+                    INT_n <= '0';
+                    int_active <= '0';
+                end if;
+            end if;
+            -- INT stays active until acknowledged
+            if M1_n = '0' and IORQ_n = '0' then
+                INT_n <= '1';
+            end if;
+            -- NMI is edge triggered and so it's only active for one clock cycle.
+            if nmi_active = '1' then
+                if nmi_counter > 0 then
+                    nmi_counter <= nmi_counter - 1;
+                    NMI_n <= '1';
+                else
+                    NMI_n <= '0';
+                    nmi_active <= '0';
+                end if;
+            else
+                NMI_n <= '1';
+            end if;
+            if SCHED_INT_n = '0' then
+                if D(7) = '0' then
+                    -- Schedule interrupt
+                    int_counter <= unsigned(D(6 downto 0) & '0');
+                    int_active <= '1';
+                else
+                    -- Schedile NMI
+                    nmi_counter <= unsigned(D(6 downto 0) & '0');
+                    nmi_active <= '1';
+                end if;
+            end if;
+        end if;
+    end process;
 
     process (Reset_n, Clk)
     begin
@@ -111,14 +167,8 @@ begin
             Mirror <= '0';
         elsif Clk'event and Clk = '1' then
             Reset_s <= '1';
-            if IORQ_n = '0' and WR_n = '0' then
-                case A(7 downto 0) is
-                when "11111110" => -- write to I/O address 0xfe sets the 'mirror' bit from D0
-                    Mirror <= D(0);
-                when "11111111" => -- write to I/O address 0xff terminates the simulation
-                    stop;
-                when others => null;
-                end case;
+            if MIRROR_CS_n = '0' then
+                Mirror <= D(0);
             end if;
         end if;
     end process;
@@ -127,19 +177,28 @@ begin
     RAMCS_n     <= '0' when Mirror /= A(15) and MREQ_n = '0' else '1'; -- RAM is from 0x8000 if Mirror is '0', 0x0000 otherwise
     ROMCS_n     <= '0' when Mirror  = A(15) and MREQ_n = '0' else '1'; -- ROM is from 0x0000 if Mirror is '0', 0x8000 otherwise
     UART0CS_n   <= '0' when IORQ_n = '0' and A(7 downto 3) = "00000" else '1'; -- 0x00 - 0x07
-    TERMINATE_n <= '0' when IORQ_n = '0' and A(7 downto 0) = "10011010" and WR_n = '0' else '1'; -- magic I/O address 0x9a is to terminate simulation when written to
-    FATAL_n     <= '0' when IORQ_n = '0' and A(7 downto 0) = "10011011" and WR_n = '0' else '1'; -- magic I/O address 0x9b is to fatally terminate simulation when written to
+    TERMINATE_n <= '0' when IORQ_n = '0' and A(7 downto 0) = "11111011" and WR_n = '0' else '1'; -- magic I/O address 0xfb is to terminate simulation when written to. If 0 is written, terminate normally, if 1, terminate with a fatal
+    MARKER_n    <= '0' when IORQ_n = '0' and A(7 downto 0) = "11111011" and RD_n = '0' else '1'; -- magic I/O address 0xfb is to mark things when read from
+    SCHED_INT_n <= '0' when IORQ_n = '0' and A(7 downto 0) = "11111010" and WR_n = '0' else '1'; -- magic I/O address 0xfa is to schedule an interrupt or NMI for the future
+    STAT_CS_n   <= '0' when IORQ_n = '0' and A(7 downto 0) = "11111110" and WR_n = '0' else '1'; -- magic I/O address 0xfe is to write a status value that can be seen in the trace (this is UART TX on PCW)
+    MIRROR_CS_n <= '0' when IORQ_n = '0' and A(7 downto 0) = "00111110" and WR_n = '0' else '1'; -- magic I/O address 0x3e is to change the memory address decoding
 
     process (CLK)
     begin
         if CLK'event and CLK = '0' then
             if TERMINATE_n = '0' then
-                report "Terminating simulation at the request of the code" severity warning;
+                if D = "00000000" then
+                    report "Terminating simulation at the request of the code" severity note;
+                else
+                    report "FATAL ERROR in simulation at the request of the code" severity error;
+                end if;
                 stop;
             end if;
-            if FATAL_n = '0' then
-                report "FATAL ERROR in simulation at the request of the code" severity error;
-                stop;
+            if MARKER_n = '0' then
+                report "MARKER" severity note;
+            end if;
+            if STAT_CS_n = '0' then
+                STAT_REG <= D;
             end if;
         end if;
     end process;

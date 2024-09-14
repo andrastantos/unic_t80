@@ -31,9 +31,17 @@ init:
         ld a,2
         im 1    ; set interrupt mode 1
         ei      ; enable interrupts
+        ; Schedule interrupt 100 cycles into the operation, NMI into 200 cycles
+        ld a,50
+        out 0xfa
+        ld a,100+128
+        out 0xfa
+
 wait:
         cp b
         jr nz,wait
-        out 0x9a ; terminate
+
+        ld a,0
+        out 0xfb ; terminate
 done:
         jp done

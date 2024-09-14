@@ -32,13 +32,14 @@ init:
         ld hl,src
         ld de,0x2000 ; some random target address
 loop:
-        out 0x02 ; just something to mark the trace
+        out 0xfe ; just something to mark the trace
         ldi
         push af
         pop af
         jp pe, loop
 
-        out 0x9a ; terminate
+        ld a,0
+        out 0xfb ; terminate
 done:
         jp done
 

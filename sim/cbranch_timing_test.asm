@@ -75,9 +75,11 @@ second:
         cp 0x34
         jr nz, fatal
 
-        out 0x9a ; terminate
+        ld a,0
+        out 0xfb ; terminate
 done:
         jp done
 fatal:
-        out 0x9b ; terminate
+        ld a,1
+        out 0xfb ; terminate
         jp done
