@@ -38,6 +38,8 @@ init:
         inc (hl)
         inc (hl)
         inc (hl)
-        out 0x9a ; terminate
+
+        ld a,0
+        out 0xfb ; terminate
 done:
         jp done
