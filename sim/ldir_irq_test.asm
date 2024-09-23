@@ -37,7 +37,7 @@ nmi:
 init:
         im 1
         ei
-        ld bc,0x100
+        ld bc,0x20
         ld hl,src
         ld de,dst
 
@@ -49,6 +49,13 @@ init:
         ld a,2
 
         ldir
+
+        ld bc,0x20
+        ld hl,src
+        ld de,dst
+
+        ldir
+        rst 0x38
 
 ;        push af
 ;        pop af

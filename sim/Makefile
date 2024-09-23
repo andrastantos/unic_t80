@@ -2,7 +2,7 @@ GHDL=ghdl
 GHDLFLAGS= -fsynopsys -fexplicit --std=08 -O2
 GHDLRUNFLAGS=
 
-PROGRAM = ldir_irq_test
+PROGRAM = reg_r_test
 
 # Default target : elaborate
 all: run
