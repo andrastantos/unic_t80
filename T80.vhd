@@ -94,7 +94,8 @@ entity T80 is
 		Flag_H    : integer := 4;
 		Flag_Y    : integer := 5;
 		Flag_Z    : integer := 6;
-		Flag_S    : integer := 7
+		Flag_S    : integer := 7;
+		Use_R_override: integer := 0 -- 0 => Normal operatin, 1 => override R
 	);
 	port(
 		RESET_n    : in  std_logic;
@@ -127,7 +128,11 @@ entity T80 is
 		DIR        : in  std_logic_vector(211 downto 0) := (others => '0'); -- IFF2, IFF1, IM, IY, HL', DE', BC', IX, HL, DE, BC, PC, SP, R, I, F', A', F, A
 
 		-- debug signals
-		DBG        : out std_logic
+		DBG        : out std_logic;
+		IgnoreDataMismatch : out std_logic;
+		IgnoreCtrlMismatch : out std_logic;
+		IgnoreAddrMismatch : out std_logic;
+		R_override : in std_logic_vector(7 downto 0)
 	);
 end T80;
 
@@ -277,7 +282,16 @@ architecture rtl of T80 is
 	signal T_Res_Save           : std_logic;
 
 	signal NoRead_i             : std_logic;
+
+
+	-- debug signals, not purpose other then better naming
+	signal FlagX                 : std_logic;
+	signal FlagY                 : std_logic;
 begin
+
+	FlagX <= F(3);
+	FlagY <= F(5);
+
 
 	--DBG <= I_RETN;
 	DBG <= INT_n or NMI_n;
@@ -363,7 +377,10 @@ begin
 			Write       => Write,
 			No_PC       => No_PC,
 			XYbit_undoc => XYbit_undoc,
-			Early_T_Res => Early_T_Res);
+			Early_T_Res => Early_T_Res,
+			IgnoreDataMismatch => IgnoreDataMismatch,
+			IgnoreCtrlMismatch => IgnoreCtrlMismatch,
+			IgnoreAddrMismatch => IgnoreAddrMismatch);
 
 	alu : T80_ALU
 		generic map(
@@ -530,6 +547,10 @@ begin
 					Z16_r <= '0';
 				end if;
 
+				if MCycle  = "001" and TState = 4 and Use_R_override = 1 then
+					R <= R_override(7) & (unsigned(R_override(6 downto 0)) + 2);
+				end if;
+
 				if MCycle  = "001" and TState(2) = '0' then
 				-- MCycle = 1 and TState = 1, 2, or 3
 
@@ -537,7 +558,9 @@ begin
 						if Mode < 2 then
 							A(7 downto 0) <= std_logic_vector(R);
 							A(15 downto 8) <= I;
-							R(6 downto 0) <= R(6 downto 0) + 1;
+							if Use_R_override = 0 then
+								R(6 downto 0) <= R(6 downto 0) + 1;
+							end if;
 						end if;
 
 						if Jump = '0' and Call = '0' and NMICycle = '0' and IntCycle = '0' and not (Halt_FF = '1' or Halt = '1') then

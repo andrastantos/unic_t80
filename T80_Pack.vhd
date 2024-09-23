@@ -80,7 +80,8 @@ package T80_Pack is
 		Flag_H    : integer := 4;
 		Flag_Y    : integer := 5;
 		Flag_Z    : integer := 6;
-		Flag_S    : integer := 7
+		Flag_S    : integer := 7;
+		Use_R_override: integer := 0 -- 0 => Normal operatin, 1 => override R
 	);
 	port(
 		RESET_n         : in std_logic;
@@ -112,7 +113,11 @@ package T80_Pack is
 		DIR             : in  std_logic_vector(211 downto 0) := (others => '0'); -- IFF2, IFF1, IM, IY, HL', DE', BC', IX, HL, DE, BC, PC, SP, R, I, F', A', F, A
 
 		-- debug signals
-		DBG             : out std_logic
+		DBG             : out std_logic;
+		IgnoreDataMismatch : out std_logic;
+		IgnoreCtrlMismatch : out std_logic;
+		IgnoreAddrMismatch : out std_logic;
+		R_override              : in std_logic_vector(7 downto 0) := (others => 'X')
 	);
 	end component;
 
@@ -216,7 +221,10 @@ package T80_Pack is
 		Write                   : out std_logic;
 		No_PC                   : out std_logic;
 		XYbit_undoc             : out std_logic;
-		Early_T_Res             : out std_logic
+		Early_T_Res             : out std_logic;
+		IgnoreDataMismatch      : out std_logic;
+		IgnoreCtrlMismatch      : out std_logic;
+		IgnoreAddrMismatch      : out std_logic
 	);
 	end component;
 

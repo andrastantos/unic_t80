@@ -61,6 +61,9 @@ module shadow_tracer_top (
     logic BUSAK_n_i;
     logic [15:0] A_i;
     logic DBG_out;
+	logic IgnoreDataMismatch;
+	logic IgnoreCtrlMismatch;
+	logic IgnoreAddrMismatch;
 
     //assign GND = 1'b0;
     assign GND = 1'bz;
@@ -97,7 +100,8 @@ module shadow_tracer_top (
     T80a_dido #(
         .Mode(0),
         .IOWait(1),
-        .R800_mode(0)
+        .R800_mode(0),
+        .Use_R_override(1)
     ) z80 (
         .RESET_n (RESET_n_i ),
         .CLK_n   (CLK_n     ),
@@ -117,7 +121,11 @@ module shadow_tracer_top (
         .DI      (CPU_DI    ),
         .DO      (CPU_DO    ),
         .DO_EN_n (DO_EN_n   ),
-        .DBG_out (DBG_out   )
+        .DBG_out (DBG_out   ),
+        .IgnoreDataMismatch (IgnoreDataMismatch),
+        .IgnoreCtrlMismatch (IgnoreCtrlMismatch),
+        .IgnoreAddrMismatch (IgnoreAddrMismatch),
+        .R_override (A[7:0])
     );
 
     // We compare our 'outputs' to the ones comeing from the outside. We'll have to be a bit careful though:
@@ -129,23 +137,25 @@ module shadow_tracer_top (
     logic addr_match;
 
     assign ctrl_match =
-        (M1_n_i == M1_n) &&
-        (MREQ_n_i == MREQ_n) &&
-        (IORQ_n_i == IORQ_n) &&
-        (RD_n_i == RD_n) &&
-        (WR_n_i == WR_n) &&
-        (RFSH_n_i == RFSH_n) &&
-        (HALT_n_i == HALT_n) &&
-        (BUSAK_n_i == BUSAK_n);
+        (
+            (M1_n_i == M1_n) &&
+            (MREQ_n_i == MREQ_n) &&
+            (IORQ_n_i == IORQ_n) &&
+            (RD_n_i == RD_n) &&
+            (WR_n_i == WR_n) &&
+            (RFSH_n_i == RFSH_n) &&
+            (HALT_n_i == HALT_n) &&
+            (BUSAK_n_i == BUSAK_n)
+        );
 
-    assign data_match = (CPU_DO == D) | DO_EN_n | (MREQ_n_i && IORQ_n_i);
-    assign addr_match = A_i == A;
+    assign data_match = (CPU_DO == D) || DO_EN_n || (MREQ_n_i && IORQ_n_i) || IgnoreDataMismatch;
+    assign addr_match = (A_i == A) || IgnoreDataMismatch;
     always @(posedge CLK_n) begin
-        rise_match <= ~RESET_n | ctrl_match & data_match; // & addr_match;
+        rise_match <= ~RESET_n | (ctrl_match || IgnoreCtrlMismatch || 1) & data_match; // & addr_match;
     end;
 
     always @(negedge CLK_n) begin
-        fall_match <= ~RESET_n | ctrl_match & data_match; // & addr_match;
+        fall_match <= ~RESET_n | (ctrl_match || IgnoreCtrlMismatch || 1) & data_match; // & addr_match;
     end;
 
     logic match;

@@ -154,7 +154,10 @@ entity T80_MCode is
       Write       : out std_logic;
       No_PC       : out std_logic;
       XYbit_undoc : out std_logic;
-	  Early_T_Res : out std_logic
+	  Early_T_Res : out std_logic;
+      IgnoreDataMismatch : out std_logic;
+      IgnoreCtrlMismatch : out std_logic;
+      IgnoreAddrMismatch : out std_logic
    );
 end T80_MCode;
 
@@ -263,6 +266,9 @@ begin
 		XYbit_undoc <= '0';
 		SetWZ <= "00";
 		Early_T_Res <= '0';
+		IgnoreDataMismatch <= '0';
+		IgnoreCtrlMismatch <= '0';
+		IgnoreAddrMismatch <= '0';
 
 		case ISet is
 		when "00" =>
@@ -597,6 +603,9 @@ begin
 					end if;
 					Write <= '1';
 				when 3 =>
+					if IRB = "11110101" then
+						IgnoreDataMismatch <= '1';
+					end if;
 					Write <= '1';
 				when others => null;
 				end case;
@@ -1300,6 +1309,7 @@ begin
 				Set_Addr_To <= aSP;
 				Set_BusB_To <= "1100";
 			when 5 =>
+				IgnoreDataMismatch <= '1';
 				Write <= '1';
 				Call <= '1';
 			when others => null;

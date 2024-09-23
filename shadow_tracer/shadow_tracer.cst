@@ -103,7 +103,7 @@ IO_PORT "spi_clk"          IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=4 BANK_VCCIO=3.
 
 // Connect serial port to JTAG connector pint
 IO_LOC  "TXD"              34;
-IO_PORT "TXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=4 BANK_VCCIO=3.3;
+IO_PORT "TXD"              IO_TYPE=LVCMOS33 PULL_MODE=DOWN BANK_VCCIO=3.3;
 IO_LOC  "RXD"              33;
 IO_PORT "RXD"              IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
 

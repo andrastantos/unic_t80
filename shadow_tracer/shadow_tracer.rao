@@ -107,7 +107,19 @@
             <Signal capture_enable="true">match</Signal>
             <Signal capture_enable="true">CLK_n</Signal>
             <Signal capture_enable="true">NMI_n</Signal>
+            <Signal capture_enable="true">INT_n</Signal>
             <Signal capture_enable="true">z80/u0/NMICycle</Signal>
+            <Bus capture_enable="true" name="z80/u0/MCycle[2:0]">
+                <Signal>z80/u0/MCycle[2]</Signal>
+                <Signal>z80/u0/MCycle[1]</Signal>
+                <Signal>z80/u0/MCycle[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="z80/u0/TState[2:0]">
+                <Signal>z80/u0/TState[2]</Signal>
+                <Signal>z80/u0/TState[1]</Signal>
+                <Signal>z80/u0/TState[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">z80/u0/IntCycle</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
@@ -132,7 +144,7 @@
             <Trigger index="15"/>
         </Triggers>
         <MatchUnits>
-            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="F" value1="0" trigger="0"/>
+            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="1" counter_width="4" counter="2" countinuous="0" func="0" value0="F" value1="0" trigger="0"/>
             <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
@@ -153,5 +165,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0011001001110000</GAO_ID>
+    <GAO_ID>0010010000111110</GAO_ID>
 </GAO_CONFIG>

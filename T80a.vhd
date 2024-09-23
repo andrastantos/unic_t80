@@ -194,7 +194,9 @@ begin
 			DO => DO,
 			MC => MCycle,
 			TS => TState,
-			IntCycle_n => IntCycle_n);
+			IntCycle_n => IntCycle_n,
+         R_override => (others => 'X')
+      );
 
 	process (CLK_n)
 	begin
@@ -357,9 +359,10 @@ entity T80a_dido is
 	generic(
 		Mode            : integer := 0;     -- 0 => Z80, 1 => Fast Z80, 2 => 8080, 3 => GB
 		IOWait          : integer := 1;     -- 0 => Single I/O cycle, 1 => Std I/O cycle
-		R800_mode       : integer := 0      -- 0 => no R800 instructions (multiplies), 1 => support R800 multiplies
+		R800_mode       : integer := 0;     -- 0 => no R800 instructions (multiplies), 1 => support R800 multiplies
+		Use_R_override  : integer := 0      -- 0 => Normal operatin, 1 => override R	);
 	);
-	port(
+   port(
 		RESET_n         : in std_logic;
 		CLK_n           : in std_logic;
 		WAIT_n          : in std_logic;
@@ -381,7 +384,11 @@ entity T80a_dido is
 
 
       -- debug signals
-      DBG_out         : out std_logic
+      DBG_out         : out std_logic;
+		IgnoreDataMismatch : out std_logic;
+		IgnoreCtrlMismatch : out std_logic;
+		IgnoreAddrMismatch : out std_logic;
+		R_override : in std_logic_vector(7 downto 0) := (others => 'X')
 	);
 end T80a_dido;
 
@@ -471,7 +478,8 @@ begin
 		generic map(
 			Mode      => Mode,
 			R800_mode => R800_mode,
-			IOWait    => IOWait
+			IOWait    => IOWait,
+         Use_R_override => Use_R_override
       )
 		port map(
 			CEN => CEN,
@@ -496,7 +504,12 @@ begin
 			TS => TState,
 			IntCycle_n => IntCycle_n,
          IntE => IntE,
-         DBG => DBG);
+         DBG => DBG,
+			IgnoreDataMismatch => IgnoreDataMismatch,
+			IgnoreCtrlMismatch => IgnoreCtrlMismatch,
+			IgnoreAddrMismatch => IgnoreAddrMismatch,
+         R_override => R_override
+      );
 
 	process (CLK_n)
 	begin
