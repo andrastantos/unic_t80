@@ -2,7 +2,7 @@ GHDL=ghdl
 GHDLFLAGS= -fsynopsys -fexplicit --std=08 -O2
 GHDLRUNFLAGS=
 
-PROGRAM = reg_r_test
+PROGRAM = concurrent_irq_nmi_test
 
 # Default target : elaborate
 all: run

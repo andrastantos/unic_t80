@@ -1335,11 +1335,11 @@ begin
 							(I_BTR and (not IR(4) or F(Flag_Z)));
 					if TState = 2 then
 						if SetEI = '1' then
-							IntE_FF1 <= '1';
+							IntE_FF1 <= not NMICycle; -- only allow for interrupts if there isn't a pending NMI. If there is, we're depending on RETN to restore IFF1
 							IntE_FF2 <= '1';
 						end if;
 						if I_RETN = '1' then
-							IntE_FF1 <= IntE_FF2;
+							IntE_FF1 <= IntE_FF2 and not NMICycle; -- if there's a (new) NMI during the execution of RETN, we simply keep interrupts disabled and go into the new NMI handler
 						end if;
 					end if;
 					if TState = 3 then
