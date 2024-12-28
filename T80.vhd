@@ -283,6 +283,8 @@ architecture rtl of T80 is
 
 	signal NoRead_i             : std_logic;
 
+	-- register for interrupt delay
+	signal INT_n_i              : std_logic;
 
 	-- debug signals, not purpose other then better naming
 	signal FlagX                 : std_logic;
@@ -292,9 +294,16 @@ begin
 	FlagX <= F(3);
 	FlagY <= F(5);
 
+	process (CLK_n)
+	begin
+		if CLK_n'event and CLK_n = '1' then
+			INT_n_i <= INT_n;
+		end if;
+	end process;
+
 
 	--DBG <= I_RETN;
-	DBG <= INT_n or NMI_n;
+	DBG <= INT_n_i or NMI_n;
 
 	REG <= IntE_FF2 & IntE_FF1 & IStatus & DOR & std_logic_vector(PC) & std_logic_vector(SP) & std_logic_vector(R) & I & Fp & Ap & F & ACC when Alternate = '0'
 			 else IntE_FF2 & IntE_FF1 & IStatus & DOR(127 downto 112) & DOR(47 downto 0) & DOR(63 downto 48) & DOR(111 downto 64) &
@@ -1359,7 +1368,7 @@ begin
 						BusAck <= '0';
 						if TState = 2 and Wait_n = '0' and (NoRead_i = '0' or MCycle = "001") then
 						elsif T_Res = '1' then
-							if Halt = '1' and  ( not(Mode = 3 and INT_n = '0' and IntE_FF1 = '0')) then  -- halt bug when Mode = 3 , INT_n = '0' and IME=0
+							if Halt = '1' and  ( not(Mode = 3 and INT_n_i = '0' and IntE_FF1 = '0')) then  -- halt bug when Mode = 3 , INT_n_i = '0' and IME=0
 								Halt_FF <= '1';
 							end if;
 							if BusReq_s = '1' then
@@ -1390,11 +1399,11 @@ begin
 										NMI_s    <= '0';
 										NMICycle <= '1';
 										IntE_FF1 <= '0';
-									elsif IntE_FF1 = '1' and INT_n='0' and Prefix = "00" and SetEI = '0' then
+									elsif IntE_FF1 = '1' and INT_n_i='0' and Prefix = "00" and SetEI = '0' and I_RETN = '0' then
 										IntCycle <= '1';
 										IntE_FF1 <= '0';
 										IntE_FF2 <= '0';
-									elsif (Halt_FF = '1' and INT_n = '0' and Mode = 3) then
+									elsif (Halt_FF = '1' and INT_n_i = '0' and Mode = 3) then
 										Halt_FF <= '0';
 									end if;
 								else
