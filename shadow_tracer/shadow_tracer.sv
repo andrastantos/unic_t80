@@ -68,6 +68,9 @@ module shadow_tracer_top (
     //assign GND = 1'b0;
     assign GND = 1'bz;
 
+    /////////////////////////////////////////////////////////////////////////////////
+    // Create a ~50MHz reference mostly for GAO purposes for now
+    /////////////////////////////////////////////////////////////////////////////////
     logic oled_clk;
 
     OSC osc_inst (
@@ -78,6 +81,75 @@ module shadow_tracer_top (
     defparam osc_inst.FREQ_DIV = 4; // Sets clk to about 50MHz
     defparam osc_inst.DEVICE = "GW1NR-9C";
 
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // Generate an 80 and a 40MHz clock that's frequency locked to CLK_n
+    /////////////////////////////////////////////////////////////////////////////////
+
+
+    logic clk_80;
+    logic clk_40;
+    logic pll_locked;
+    logic clkoutp_o;
+    logic clkoutd3_o;
+    logic gw_gnd;
+
+    assign gw_gnd = 1'b0;
+
+    rPLL sampling_pll (
+        .CLKOUT(clk_80),
+        .LOCK(pll_locked),
+        .CLKOUTP(clkoutp_o),
+        .CLKOUTD(clk_40),
+        .CLKOUTD3(clkoutd3_o),
+        .RESET(gw_gnd),
+        .RESET_P(gw_gnd),
+        .CLKIN(CLK_n),
+        .CLKFB(gw_gnd),
+        .FBDSEL({gw_gnd,gw_gnd,gw_gnd,gw_gnd,gw_gnd,gw_gnd}),
+        .IDSEL({gw_gnd,gw_gnd,gw_gnd,gw_gnd,gw_gnd,gw_gnd}),
+        .ODSEL({gw_gnd,gw_gnd,gw_gnd,gw_gnd,gw_gnd,gw_gnd}),
+        .PSDA({gw_gnd,gw_gnd,gw_gnd,gw_gnd}),
+        .DUTYDA({gw_gnd,gw_gnd,gw_gnd,gw_gnd}),
+        .FDLY({gw_gnd,gw_gnd,gw_gnd,gw_gnd})
+    );
+
+    defparam sampling_pll.FCLKIN = "4";
+    defparam sampling_pll.DYN_IDIV_SEL = "false";
+    defparam sampling_pll.IDIV_SEL = 0;
+    defparam sampling_pll.DYN_FBDIV_SEL = "false";
+    defparam sampling_pll.FBDIV_SEL = 19;
+    defparam sampling_pll.DYN_ODIV_SEL = "false";
+    defparam sampling_pll.ODIV_SEL = 8;
+    defparam sampling_pll.PSDA_SEL = "0000";
+    defparam sampling_pll.DYN_DA_EN = "true";
+    defparam sampling_pll.DUTYDA_SEL = "1000";
+    defparam sampling_pll.CLKOUT_FT_DIR = 1'b1;
+    defparam sampling_pll.CLKOUTP_FT_DIR = 1'b1;
+    defparam sampling_pll.CLKOUT_DLY_STEP = 0;
+    defparam sampling_pll.CLKOUTP_DLY_STEP = 0;
+    defparam sampling_pll.CLKFB_SEL = "internal";
+    defparam sampling_pll.CLKOUT_BYPASS = "false";
+    defparam sampling_pll.CLKOUTP_BYPASS = "false";
+    defparam sampling_pll.CLKOUTD_BYPASS = "false";
+    defparam sampling_pll.DYN_SDIV_SEL = 2;
+    defparam sampling_pll.CLKOUTD_SRC = "CLKOUT";
+    defparam sampling_pll.CLKOUTD3_SRC = "CLKOUT";
+    defparam sampling_pll.DEVICE = "GW1NR-9C";
+
+    // delay and register NMI and INT pins
+    logic NMI_i;
+    logic INT_i;
+    logic [7:0] NMI_r;
+    logic [7:0] INT_r;
+    always @(negedge clk_80) NMI_r <= {NMI_r[6:0], NMI_n};
+    always @(negedge clk_80) INT_r <= {INT_r[6:0], INT_n};
+    assign NMI_i = NMI_n;
+    assign INT_i = INT_n;
+    //assign NMI_i = NMI_r[0];
+    //assign INT_i = INT_r[0];
+
+    // Tie some pins to reasonable inactive states
     assign lcd_rst_n = 1'b0;
     assign lcd_cs_n = 1'b1;
     assign psram_cs_n = 1'b1;
@@ -106,8 +178,8 @@ module shadow_tracer_top (
         .RESET_n (RESET_n_i ),
         .CLK_n   (CLK_n     ),
         .WAIT_n  (WAIT_n    ),
-        .INT_n   (INT_n     ),
-        .NMI_n   (NMI_n     ),
+        .INT_n   (INT_i     ),
+        .NMI_n   (NMI_i     ),
         .BUSRQ_n (BUSRQ_n   ),
         .M1_n    (M1_n_i    ),
         .MREQ_n  (MREQ_n_i  ),
@@ -149,13 +221,13 @@ module shadow_tracer_top (
         );
 
     assign data_match = (CPU_DO == D) || DO_EN_n || (MREQ_n_i && IORQ_n_i) || IgnoreDataMismatch;
-    assign addr_match = (A_i == A) || IgnoreDataMismatch;
+    assign addr_match = (A_i == A) || IgnoreAddrMismatch;
     always @(posedge CLK_n) begin
-        rise_match <= ~RESET_n | (ctrl_match || IgnoreCtrlMismatch || 1) & data_match; // & addr_match;
+        rise_match <= ~RESET_n | (ctrl_match || IgnoreCtrlMismatch) & data_match; // & addr_match;
     end;
 
     always @(negedge CLK_n) begin
-        fall_match <= ~RESET_n | (ctrl_match || IgnoreCtrlMismatch || 1) & data_match; // & addr_match;
+        fall_match <= ~RESET_n | (ctrl_match || IgnoreCtrlMismatch) & data_match; // & addr_match;
     end;
 
     logic match;

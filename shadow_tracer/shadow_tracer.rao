@@ -120,11 +120,15 @@
                 <Signal>z80/u0/TState[0]</Signal>
             </Bus>
             <Signal capture_enable="true">z80/u0/IntCycle</Signal>
+            <Signal capture_enable="true">z80/u0/IntE_FF1</Signal>
+            <Signal capture_enable="true">z80/u0/IntE_FF2</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
                     <Signal>match</Signal>
+                    <Signal>NMI_n</Signal>
+                    <Signal>INT_n</Signal>
                 </SignalList>
             </Trigger>
             <Trigger index="1"/>
@@ -144,7 +148,7 @@
             <Trigger index="15"/>
         </Triggers>
         <MatchUnits>
-            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="1" counter_width="4" counter="2" countinuous="0" func="0" value0="F" value1="0" trigger="0"/>
+            <MatchUnit index="0" enabled="1" match_type="1" counter_enable="1" counter_width="4" counter="2" countinuous="0" func="0" value0="FXX" value1="000" trigger="0"/>
             <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
@@ -165,5 +169,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0010010000111110</GAO_ID>
+    <GAO_ID>1000111101101010</GAO_ID>
 </GAO_CONFIG>
