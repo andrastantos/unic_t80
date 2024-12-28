@@ -1,0 +1,34 @@
+.logo a,
+.logo img {
+  display: inline-block;
+  border: none;
+  outline: none;
+  line-height: 1.6;
+}
+.logo a {
+  position: relative;
+  width: 18em;
+  opacity: 0.1;
+  font-family: sans-serif;
+  transition: opacity 200ms;
+}
+.logo a:hover {
+  opacity: 0.2;
+}
+.logo span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: transparent;
+  font-size: 0.9765625em;
+  transition: color 200ms;
+}
+.logo a:hover span {
+  color: #fff;
+}
+.logo img {
+  width: 6em;
+  color: #fff;
+  font-size: 3em;
+  text-align: left;
+}
