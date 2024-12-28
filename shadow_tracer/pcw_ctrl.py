@@ -170,7 +170,7 @@ class PcwKeyboard(PcwKeyboardProtocol):
             60:  (0x03, 7), # period
             61:  (0x03, 6), # slash
             62:  (0x02, 5), # Shift_R
-            105: (0x0a, 1), # Control_R - mapped to 'extra'
+            #105: (0x0a, 1), # Control_R - used to force send whole key matrix
             #113: # Left
             108: (0x0a, 7), # Alt_R
             #134: # Super_R
@@ -240,10 +240,13 @@ class PcwKeyboard(PcwKeyboardProtocol):
 
     def send_keydown(self, keycode):
         try:
-            matrix_ptr = self.key_matrix[keycode]
-            self.matrix[matrix_ptr[0]] |= 1 << matrix_ptr[1]
-            self.matrix_dirty[matrix_ptr[0]] = True
-            self.send_matrix()
+            if keycode == 105:
+                self.force_send_matrix()
+            else:
+                matrix_ptr = self.key_matrix[keycode]
+                self.matrix[matrix_ptr[0]] |= 1 << matrix_ptr[1]
+                self.matrix_dirty[matrix_ptr[0]] = True
+                self.send_matrix()
         except KeyError:
             pass
 
