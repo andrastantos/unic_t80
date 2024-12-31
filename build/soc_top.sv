@@ -69,15 +69,61 @@ module t80_top (
 
     //defparam osc_inst.FREQ_DIV = 10; // Sets clk to about 21MHz
     defparam osc_inst.FREQ_DIV = 4; // Sets clk to about 50MHz
-    defparam osc_inst.DEVICE = "GW1NR-9C";
+    defparam osc_inst.DEVICE = "GW1NR-4C";
 
 
-    assign lcd_rst_n = 1'b0;
-    assign lcd_cs_n = 1'b1;
+    logic busy;
+    logic spi_ncs;
+    logic spi_mosi;
+    logic [7:0] clk_divider;
+    logic [7:0] rst_divider;
+
+    logic refresh;
+    logic lcd_nrst;
+    logic oled_spi_clk;
+
+    logic [31:0] refresh_divider;
+    //always @(posedge oled_clk) begin
+    //    if (refresh_divider == 10000000) begin
+    //        refresh = 1'b1;
+    //        refresh_divider = 0;
+    //    end else begin
+    //        refresh = 1'b0;
+    //        refresh_divider = refresh_divider + 1'b1;
+    //    end
+    //end
+    assign refresh = 1'b0;
+
+
+
+    assign clk_divider = 20; // Roughly 1MHz SPI clk
+    assign rst_divider = 100; // Roughly 5us of reset pulse
+
+    OledCtrl oled_ctr (
+        .clk(oled_clk),
+        .rst(1'b0),
+        .reset(1'b0),
+        .refresh(refresh),
+        .busy(busy),
+        .spi_clk(oled_spi_clk),
+        .spi_mosi(spi_mosi),
+        .spi_ncs(spi_ncs),
+        .lcd_nrst(lcd_nrst),
+        .clk_divider(clk_divider),
+        .rst_divider(rst_divider)
+    );
+
     assign psram_cs_n = 1'b1;
     assign flash_cs_n = 1'b1;
-    assign spi_mosi_io0 = 1'b1;
-    assign spi_clk = 1'b1;
+    assign lcd_cs_n = spi_ncs;
+    assign spi_mosi_io0 = spi_mosi;
+    assign lcd_rst_n = lcd_nrst;
+    assign spi_clk = oled_spi_clk;
+    //assign lcd_rst_n = 1'b0;
+    //assign lcd_cs_n = 1'b1;
+    //assign spi_mosi_io0 = 1'b1;
+    //assign spi_clk = 1'b1;
+
 
     assign CPU_DI = D;
     assign D      = ~DO_EN_n ? CPU_DO : 8'bZ;
