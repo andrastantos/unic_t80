@@ -117,7 +117,7 @@ module Memory (
 	logic [8:0] mem [0:1023];
 	initial begin
 		mem[0] <= 9'h1;
-		mem[1] <= 9'h24;
+		mem[1] <= 9'h3b;
 		mem[2] <= 9'hae;
 		mem[3] <= 9'hd5;
 		mem[4] <= 9'h80;
@@ -665,6 +665,29 @@ module Memory (
 		mem[546] <= 9'h180;
 		mem[547] <= 9'h180;
 		mem[548] <= 9'h1ff;
+		mem[549] <= 9'hae;
+		mem[550] <= 9'hd5;
+		mem[551] <= 9'h80;
+		mem[552] <= 9'ha8;
+		mem[553] <= 9'h1f;
+		mem[554] <= 9'hd3;
+		mem[555] <= 9'h0;
+		mem[556] <= 9'h40;
+		mem[557] <= 9'h8d;
+		mem[558] <= 9'h14;
+		mem[559] <= 9'ha1;
+		mem[560] <= 9'hc0;
+		mem[561] <= 9'hda;
+		mem[562] <= 9'h2;
+		mem[563] <= 9'h81;
+		mem[564] <= 9'hbf;
+		mem[565] <= 9'hd9;
+		mem[566] <= 9'hf1;
+		mem[567] <= 9'hdb;
+		mem[568] <= 9'h30;
+		mem[569] <= 9'ha4;
+		mem[570] <= 9'ha6;
+		mem[571] <= 9'haf;
 	end
 
 	logic [9:0] addr_reg;
